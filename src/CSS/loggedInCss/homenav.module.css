@@ -1,0 +1,240 @@
+.nav {
+  background-color: #fff;
+  padding: 0.5rem 1.3rem;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  width: 100vw;
+  box-sizing: border-box;
+  align-items: center;
+}
+.small__screen {
+  display: flex;
+  align-items: center;
+  padding-inline: 2rem;
+}
+.small__screen svg {
+  color: #00000099;
+}
+.normal {
+  width: 0%;
+  border: none;
+}
+.extend {
+  width: 100%;
+  background-color: #eef3f8;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  font-size: 1.1rem;
+  color: #00000099;
+  border-radius: 5px;
+}
+.header__container {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.header__container:hover .searchres {
+  opacity: 1;
+}
+.searchres {
+  position: absolute;
+  top: 60px;
+  left: 80px;
+  z-index: 1;
+}
+
+.header svg {
+  color: #0a66c2;
+}
+.no_list {
+  display: none;
+}
+.lists {
+  display: flex;
+  flex: 2;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.lists li {
+  list-style: none;
+  font-size: 1.3rem;
+  color: #00000099;
+}
+.lists .icon__titles {
+  display: none;
+}
+.lists :nth-child(7) {
+  display: none;
+}
+.icons__container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  color: #00000099;
+}
+.icons__container a {
+  position: relative;
+}
+.badge__container {
+  position: absolute;
+  font-size: 0.6rem;
+  margin-left: 20px;
+  top: -20%;
+  height: 7px;
+  width: 7px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.active__link {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: black;
+  text-decoration: none;
+  align-items: center;
+}
+
+.me {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.signOut__container {
+  cursor: pointer;
+}
+.work {
+  position: absolute;
+  top: 110%;
+  display: flex;
+  font-size: 1rem;
+  max-width: 30%;
+  padding: 1rem 0.8rem;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  margin-right: 19px;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%);
+  border-radius: 3px;
+  gap: 5px;
+}
+
+.work p {
+  text-align: center;
+}
+.spinner {
+  animation-name: loader1;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  margin: 0 auto;
+  color: #00000099;
+}
+@keyframes loader1 {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/* media queries */
+
+@media screen and (min-width: 1024px) {
+  .nav {
+    justify-content: center;
+    padding: 0.3rem 1.7rem;
+  }
+  .big__screen {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .big__screen input {
+    width: 300px;
+    border-radius: 5px;
+    background-color: #eef3f8;
+    padding: 0.7rem 2.5rem;
+    border: none;
+    font-size: 1.1rem;
+    color: #00000099;
+  }
+  .big__screen svg {
+    position: absolute;
+    right: 90%;
+    color: #00000099;
+  }
+  .header {
+    flex: 2;
+    margin-left: 20px;
+  }
+
+  .lists .icon__titles {
+    display: block;
+    font-size: 1rem;
+  }
+  .lists :nth-child(7) {
+    display: block;
+  }
+  .icons__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .icons__container a {
+    position: relative;
+  }
+  .badge__container {
+    position: absolute;
+    font-size: 0.8rem;
+
+    top: -10%;
+  }
+  .active__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    position: relative;
+  }
+  .active__link::after {
+    content: '';
+    border: black solid 2px;
+    width: 80%;
+    margin-bottom: -1rem;
+    transition: all 250ms ease-in-out;
+    animation: active_animation ease-in-out 250ms;
+  }
+  .me {
+    height: 30px;
+    width: 30px;
+    object-fit: cover;
+  }
+  @keyframes active_animation {
+    0% {
+      transform: scaleX(0);
+    }
+    50% {
+      transform: scaleX(0.5);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
+  .work {
+    max-width: 15%;
+    gap: 12px;
+  }
+}

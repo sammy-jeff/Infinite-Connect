@@ -1,0 +1,110 @@
+.update__modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 100vh;
+  width: 100vw;
+  z-index: 2;
+  background-color: #00000099;
+  display: flex;
+  justify-content: center;
+  opacity: 1;
+  padding-top: 1rem;
+}
+
+.update__form__container {
+  position: absolute;
+  top: 0;
+  width: max(60%, 500px);
+  max-width: 100%;
+  background: #ffffff;
+  /* height: 100vh;
+  overflow-y: scroll; */
+  border-radius: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-block: 1rem;
+}
+.top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #000000e6;
+  padding-inline: 1rem;
+  border-bottom: lightgray 1px solid;
+  padding-bottom: 0.7rem;
+}
+.top h2 {
+  font-weight: 100;
+}
+.top .cancel {
+  font-size: 1.2rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.top .cancel:hover {
+  background-color: lightgray;
+}
+.update__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 85vh;
+  overflow-y: auto;
+}
+
+.update__form .required {
+  margin-top: 10px;
+  padding: 1rem;
+  color: #00000099;
+}
+
+:is(.user__name, .work, .education, .about) {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 1rem;
+}
+:is(.user__name, .work, .education, .about) label {
+  font-size: 1.2rem;
+  color: #00000099;
+}
+:is(.user__name, .work, .education) input {
+  padding: 1.2rem;
+  color: #00000099;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.about textarea {
+  padding: 1.2rem;
+  height: 90px;
+  max-height: 120px;
+  resize: none;
+  border-radius: 5px;
+}
+
+.update__form button {
+  align-self: flex-end;
+  margin-right: 1.2rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 20px;
+  border: none;
+  background-color: #0a66c2;
+  color: #fff;
+}
+
+@media (max-width: 668px) {
+  .update__modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+}

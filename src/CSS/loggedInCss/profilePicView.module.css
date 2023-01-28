@@ -1,0 +1,108 @@
+.profilePicModal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 100vh;
+  width: 100vw;
+  z-index: 2;
+  background-color: #00000099;
+  display: flex;
+  justify-content: center;
+  opacity: 1;
+}
+
+:is(.profile__pic__container, .profile__pic__container__own) {
+  position: absolute;
+  top: 0;
+  /* width: 100%; */
+  width: max(60%, 400px);
+  height: 100vh;
+  max-width: 100%;
+  background-color: #1d2226;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  z-index: 10;
+  display: grid;
+  gap: 12px;
+}
+.profile__pic__container__own {
+  grid-template-rows: 1fr 4fr 2fr;
+}
+.profile__pic__container {
+  grid-template-rows: 1fr 5fr;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem;
+  color: #fff;
+  align-items: center;
+}
+.top h2 {
+  font-size: 1.25rem;
+  font-weight: 100;
+}
+.top button {
+  font-size: 1rem;
+  color: #fff;
+  padding: 0.6rem 0.8rem;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+.top button:hover {
+  outline: 2px white solid;
+}
+.grid_2 {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.profile__pic__container img {
+  width: 330px;
+  height: 400px;
+
+  object-fit: cover;
+  border-radius: 50%;
+}
+.profile__pic__container__own img {
+  width: 300px;
+  height: 300px;
+
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.controls {
+  border-top: lightgray 1px solid;
+  margin-inline: -1rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  color: #fff;
+}
+:is(.add__photo, .delete__photo) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.imgSpinner {
+  animation-name: loader1;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  position: absolute;
+  top: 50%;
+  color: #fff;
+}
+@keyframes loader1 {
+  100% {
+    transform: rotate(360deg);
+  }
+}

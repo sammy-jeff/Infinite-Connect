@@ -1,0 +1,61 @@
+.likeModal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 100vh;
+  width: 100vw;
+  z-index: 2;
+  background-color: #00000099;
+  display: flex;
+  justify-content: center;
+  opacity: 1;
+}
+.likedBy__container {
+  position: absolute;
+  top: 5%;
+  width: max(50%, 400px);
+  max-width: 100%;
+  background: #ffffff;
+  height: min(60vh, 700px);
+  border-radius: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px #00000099 solid;
+  padding: 0.7rem;
+  color: #00000099;
+  font-size: 1.2rem;
+}
+.top .cancel__container {
+  padding: 0.4rem;
+  cursor: pointer;
+}
+.cancel__container:hover {
+  background-color: lightgrey;
+  border-radius: 52%;
+}
+
+.likers {
+  height: 80%;
+  overflow-y: auto;
+}
+.likers .single {
+  padding: 1rem;
+  border-bottom: 1px lightgray solid;
+  font-size: 1.1rem;
+  color: #00000099;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.single a {
+  color: #0a66c2;
+}

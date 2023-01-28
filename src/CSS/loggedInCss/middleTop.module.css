@@ -1,0 +1,66 @@
+.start__post {
+  max-width: 100%;
+  padding: 0.4rem 0.8rem;
+  background-color: #fff;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 2px 3px rgb(0 0 0 / 20%);
+  gap: 8px;
+}
+
+.img__container {
+  background-color: lightgray;
+  border-radius: 50%;
+  display: flex;
+  height: fit-content;
+  max-width: fit-content;
+  justify-content: center;
+  width: fit-content;
+}
+.img__container img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.post__action {
+  width: 100%;
+  border: 1px #918c8c99 solid;
+  height: 50%;
+  padding: 1.5rem 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: 28px;
+  color: #00000099;
+}
+.bottom__part {
+  width: 100%;
+}
+.icons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.icons li {
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  font-size: 1.1rem;
+  padding: 0.8rem 0.5rem;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+li p {
+  color: #00000099;
+  font-weight: 500;
+}
+.icons li:hover {
+  background-color: lightgray;
+}
+
+@media (min-width: 40em) {
+  .top__part {
+    gap: 0px;
+  }
+}

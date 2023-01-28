@@ -1,0 +1,32 @@
+.home {
+  /* min-height: max(100vh, 600px); */
+  background-color: rgb(236, 234, 234);
+  /* position: relative; */
+  /* max-height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box; */
+}
+.home::-webkit-scrollbar {
+  display: none;
+}
+.spinner {
+  height: 80vh;
+  display: flex;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+}
+.spinner svg {
+  /* transition: all ease-in-out; */
+
+  animation-name: loader;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+}
+
+@keyframes loader {
+  100% {
+    transform: rotate(360deg);
+  }
+}

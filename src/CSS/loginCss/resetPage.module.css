@@ -1,0 +1,57 @@
+.resetPage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.resetPage header {
+  padding: 0.8rem 1rem;
+}
+.resetPage h1 {
+  padding: 0.8rem 1rem;
+  font-size: 2rem;
+  color: #000000e6;
+}
+.resetPage form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0.8rem 1rem;
+}
+.form input {
+  padding: 1rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: 10px;
+  outline: none;
+  border-color: #000000e6;
+}
+.form label {
+  font-size: 1.2rem;
+  color: #000000e6;
+}
+.form button {
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  outline: none;
+  color: #fff;
+  background-color: #0a66c2;
+  border: none;
+  cursor: pointer;
+}
+.form button:hover {
+  background-color: #034281;
+}
+@media (min-width: 700px) {
+  .resetPage {
+    align-items: center;
+  }
+  .form {
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    width: 40%;
+    min-height: 25vh;
+    gap: 30px;
+  }
+  .form input {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,232 @@
+.signUpScreen {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.signUpScreen header {
+  padding: 1.5rem 0;
+  text-align: center;
+}
+.signUpScreen h1 {
+  margin: 0 auto;
+  text-align: center;
+  font-weight: 100;
+  font-size: 2.3rem;
+  max-width: 70vw;
+}
+
+.form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding: 1.5rem 1rem;
+}
+.email__phone {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.email__phone input {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.password {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.password input {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+.password div {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.invalid {
+  color: #d11124;
+}
+
+.invalid__input {
+  border: 2px #d11124 solid;
+}
+
+.show {
+  position: absolute;
+  left: 85%;
+  top: 20%;
+}
+
+.cookie {
+  font-size: 0.85rem;
+  text-align: center;
+  color: #00000099;
+  line-height: 23px;
+}
+.cookie span {
+  color: #0a66c2;
+  font-weight: 600;
+}
+:is(.signUpBtn, .signUpBtn__gray) {
+  padding: 1rem;
+  border: none;
+  outline: none;
+
+  border-radius: 28px;
+  font-size: 1rem;
+}
+.signUpBtn {
+  background-color: #0a66c2;
+  color: #fff;
+}
+.signUpBtn__gray {
+  background-color: lightgray;
+  color: #00000099;
+}
+
+.signIn {
+  padding: 1.8rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  font-size: 1.1rem;
+  color: #00000099;
+}
+.signIn a {
+  text-decoration: none;
+  color: #0a66c2;
+  font-weight: 600;
+}
+
+.signIn a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  display: none;
+}
+.spinner {
+  animation-name: loader1;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  margin: 0 auto;
+  color: #fff;
+}
+@keyframes loader1 {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/* Media Queries */
+
+@media screen and (min-width: 600px) and (max-width: 1024px) and (min-height: 40em) {
+  .signUpScreen {
+    padding: 2rem 0;
+    justify-content: center;
+  }
+  .form {
+    width: 65vw;
+    margin: 2rem auto;
+    gap: 35px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  .email__phone {
+    gap: 15px;
+  }
+  .password {
+    gap: 15px;
+  }
+  .footer {
+    display: block;
+    position: absolute;
+    top: 100%;
+    width: 100%;
+  }
+  .show {
+    left: 90%;
+  }
+  .signIn {
+    font-size: 1.3rem;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1280px) {
+  .signUpScreen {
+    padding: 2rem 0;
+  }
+  .form {
+    width: 50vw;
+    margin: 2rem auto;
+    gap: 35px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  .email__phone {
+    gap: 15px;
+  }
+  .password {
+    gap: 15px;
+  }
+  .footer {
+    display: block;
+    position: absolute;
+    top: 100%;
+    width: 100vw;
+  }
+  .show {
+    left: 90%;
+  }
+  .signIn {
+    font-size: 1.3rem;
+    padding: 1rem 0;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .signUpScreen {
+    padding: 2rem 0;
+  }
+  .form {
+    width: 30vw;
+    margin: 2rem auto;
+    gap: 35px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  .email__phone {
+    gap: 15px;
+  }
+  .password {
+    gap: 15px;
+  }
+  .signIn {
+    font-size: 1.3rem;
+    margin-top: -10px;
+  }
+  .footer {
+    display: block;
+    position: absolute;
+    top: 100%;
+    width: 100vw;
+  }
+  .show {
+    left: 85%;
+  }
+  .signIn {
+    font-size: 1.3rem;
+  }
+}

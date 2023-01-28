@@ -1,0 +1,21 @@
+.searchResults {
+  background-color: #fff;
+  width: 250px;
+  height: fit-content;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.singleResult {
+  display: flex;
+  border-bottom: 1px solid lightgray;
+  padding: 1rem;
+  justify-content: space-between;
+}
+.singleResult a {
+  color: #0a66c2;
+}
+.no_result {
+  padding: 1rem;
+}

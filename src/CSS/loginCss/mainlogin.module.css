@@ -1,0 +1,11 @@
+.mainLogin {
+  /* min-height: 100vh; */
+  position: relative;
+}
+
+@media (max-height: 1280px) and (min-width: 800px) {
+  .mainLogin {
+    display: grid;
+    min-height: 100vh;
+  }
+}

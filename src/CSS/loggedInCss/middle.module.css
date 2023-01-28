@@ -1,0 +1,19 @@
+.middle {
+  /* margin-top: 10px; */
+  display: flex;
+  flex-direction: column;
+  /* gap: 20px; */
+  width: 100vw;
+}
+
+@media (min-width: 600px) {
+  .middle {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .middle {
+    /* gap: 35px; */
+  }
+}
