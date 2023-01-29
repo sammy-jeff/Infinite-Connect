@@ -24,6 +24,7 @@
   flex-direction: column;
   gap: 25px;
   padding: 1.5rem 1rem;
+
 }
 .email__phone {
   display: flex;
