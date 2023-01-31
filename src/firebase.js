@@ -40,21 +40,5 @@ const auth = getAuth(app)
 
 // create storage
 const storage = getStorage(app)
-// const messaging = getMessaging(app)
-// getToken(messaging, {
-//   vapidKey:
-//     'BLSE9S7wJhe_YL4XomjTcD00vTAGrLha_8cDBJPK2gkMnAO20TIVpA0vV56fVDKb_MeY7v2EyFZll2G652CEV_Q',
-// })
-//   .then((currentToken) => console.log(currentToken))
-//   .catch((err) => console.log(err))
-// function requestPermission() {
-//   console.log('requesting permission...')
-//   Notification.requestPermission().then((permission) => {
-//     if (permission === 'granted') {
-//       console.log('granted')
-//     } else if (permission === 'denied') {
-//       console.log('denied')
-//     }
-//   })
-// }
+
 export { auth, db, storage }
