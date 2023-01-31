@@ -12,23 +12,23 @@ import { getMessaging, getToken } from 'firebase/messaging'
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // For Production************************
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN ,
-  projectId: process.env.REACT_APP_PROJECT_ID ,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET ,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+  apiKey: 'AIzaSyCKw_ul9CP5i8eGk3vx-Aka6T7YKZcvvRU',
+  authDomain: 'linkedin-clone-58371.firebaseapp.com',
+  projectId: 'linkedin-clone-58371',
+  storageBucket: 'linkedin-clone-58371.appspot.com',
+  messagingSenderId: '120498568172',
+  appId: '1:120498568172:web:1242026eee5973d1f29ec9',
+  measurementId: 'G-YRSWK82BR7',
 }
 // ********************************
 // For development***********
 // const firebaseConfig = {
-//   apiKey: process.env.REACT_APP_API_KEY,
-//   authDomain: process.env.REACT_APP_AUTH_DOMAIN ,
-//   projectId: process.env.REACT_APP_PROJECT_ID ,
-//   storageBucket: process.env.REACT_APP_STORAGE_BUCKET ,
-//   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-//   appId: process.env.REACT_APP_APP_ID,
+//   apiKey: 'AIzaSyDHwPewsvmqxMv45AEpkwHVQetjrIGchzU',
+//   authDomain: 'linked-in-test.firebaseapp.com',
+//   projectId: 'linked-in-test',
+//   storageBucket: 'linked-in-test.appspot.com',
+//   messagingSenderId: '495861820872',
+//   appId: '1:495861820872:web:fa68766f833ab47027e4fd',
 // }
 // ***********************************
 // Initialize Firebase
