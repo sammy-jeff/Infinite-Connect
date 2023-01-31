@@ -27,9 +27,7 @@
   50% {
     transform: translateY(40%);
   }
-  /* 100% {
-    transform: translateY(100%);
-  } */
+
 }
 .middle_main {
   display: flex;
