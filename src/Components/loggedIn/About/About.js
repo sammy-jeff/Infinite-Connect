@@ -70,7 +70,7 @@ function About() {
             const getDownloadLink = await getDownloadURL(
               ref(storage, snap.ref.fullPath)
             )
-            await updateDoc(doc(db, `users/${auth.currentUser.uid}`), {
+            await updateDoc(doc(db, `users`,auth.currentUser.uid), {
               coverImg: getDownloadLink,
               coverImgFullPath: snap.ref.fullPath,
             })
@@ -86,7 +86,7 @@ function About() {
       }
       uploadImg()
       isMounted.current = false
-      return isMounted.current
+      return ()=>isMounted.current
     }
   }, [img])
   return (

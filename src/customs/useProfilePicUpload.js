@@ -102,7 +102,7 @@ function useProfilePicUpload(img, setImg, setLoading) {
       uploadImg()
     }
     isMounted.current = false
-    return isMounted.current
+    return ()=>isMounted.current
     // eslint-disable-next-line
   }, [img])
 }
