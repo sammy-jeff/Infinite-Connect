@@ -79,7 +79,7 @@ function SignUpScreen({ showPassword, setShowPassword }) {
         <div className={styles.email__phone}>
           <label>Email Address</label>
           <input
-            type='text'
+            type='email'
             name='email'
             className={
               val1

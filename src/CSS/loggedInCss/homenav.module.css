@@ -114,6 +114,25 @@
 }
 .signOut__container {
   cursor: pointer;
+
+}
+.signOut__container div{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.signOut__container p{
+  font-size: 0.9rem;
+}
+.signOut__container div :nth-child(2){
+
+  
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .work {
   position: absolute;

@@ -41,7 +41,7 @@ function SignInScreen({ showPassword, setShowPassword }) {
               Email Address
             </label>
             <input
-              type='text'
+              type='email'
               name='email'
               id='email'
               className={styles.email__phone}

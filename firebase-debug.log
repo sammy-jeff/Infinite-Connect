@@ -1,0 +1,63 @@
+[debug] [2023-02-24T11:41:45.997Z] ----------------------------------------------------------------------
+[debug] [2023-02-24T11:41:46.001Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP User\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2023-02-24T11:41:46.003Z] CLI Version:   11.24.0
+[debug] [2023-02-24T11:41:46.003Z] Platform:      win32
+[debug] [2023-02-24T11:41:46.003Z] Node Version:  v18.13.0
+[debug] [2023-02-24T11:41:46.005Z] Time:          Fri Feb 24 2023 12:41:46 GMT+0100 (West Africa Standard Time)
+[debug] [2023-02-24T11:41:46.006Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-02-24T11:41:46.021Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-02-24T11:41:46.022Z] > authorizing via signed-in user (okoyechibuike048@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\HP User\Desktop\projects\IC\infinite-connect
+
+[debug] [2023-02-24T11:42:24.368Z] Error: Timed out.
+    at Timeout._onTimeout (C:\Users\HP User\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:253:49)
+    at listOnTimeout (node:internal/timers:564:17)
+    at process.processTimers (node:internal/timers:507:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2023-02-24T11:42:45.596Z] ----------------------------------------------------------------------
+[debug] [2023-02-24T11:42:45.598Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP User\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2023-02-24T11:42:45.600Z] CLI Version:   11.24.0
+[debug] [2023-02-24T11:42:45.600Z] Platform:      win32
+[debug] [2023-02-24T11:42:45.600Z] Node Version:  v18.13.0
+[debug] [2023-02-24T11:42:45.602Z] Time:          Fri Feb 24 2023 12:42:45 GMT+0100 (West Africa Standard Time)
+[debug] [2023-02-24T11:42:45.602Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-02-24T11:42:45.615Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-02-24T11:42:45.615Z] > authorizing via signed-in user (okoyechibuike048@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\HP User\Desktop\projects\IC\infinite-connect
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2023-02-24T11:43:52.885Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=100
+[debug] [2023-02-24T11:44:04.544Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects?pageSize=100
+[debug] [2023-02-24T11:44:09.552Z] Error: Timed out.
+    at Timeout._onTimeout (C:\Users\HP User\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:253:49)
+    at listOnTimeout (node:internal/timers:564:17)
+    at process.processTimers (node:internal/timers:507:7)
+[error] 
+[error] Error: An unexpected error has occurred.

@@ -132,7 +132,11 @@ function HomeNav({ showInput, setShowInput }) {
             {loading ? (
               <FontAwesomeIcon className={styles.spinner} icon={faSpinner} />
             ) : (
-              <FontAwesomeIcon icon={faDoorOpen} onClick={handleSignOut} />
+              // <FontAwesomeIcon icon={faDoorOpen} onClick={handleSignOut} />
+              <div onClick={handleSignOut}>
+                <p>logout</p>
+                <p>{user?.name}</p>
+              </div>
             )}
           </div>
         </li>
