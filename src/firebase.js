@@ -64,7 +64,7 @@ export const getOrRegisterServiceWorker = () => {
  const getFirebaseToken = () =>
   getOrRegisterServiceWorker()
     .then((serviceWorkerRegistration) =>
-      getToken(messaging, { vapidKey:"BLSE9S7wJhe_YL4XomjTcD00vTAGrLha_8cDBJPK2gkMnAO20TIVpA0vV56fVDKb_MeY7v2EyFZll2G652CEV_Q", serviceWorkerRegistration }));
+      getToken(messaging, { vapidKey:process.env.NODE_ENV==="production"?"BPzE8xZxuqOOjAK-bLMUtVbqjsnj5eTsFQfn_i5ZhFU2YUWHOy1soqcEb_Q-yG3qyL0aADf_cjbs9KYYaQcAOuE":"BLSE9S7wJhe_YL4XomjTcD00vTAGrLha_8cDBJPK2gkMnAO20TIVpA0vV56fVDKb_MeY7v2EyFZll2G652CEV_Q", serviceWorkerRegistration }));
 
  const onForegroundMessage = () =>
   new Promise((resolve) => onMessage(messaging, (payload) => resolve(payload)));
