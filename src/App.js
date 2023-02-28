@@ -28,19 +28,15 @@ function App() {
       })
       .catch((err) => console.error('An error occured while retrieving firebase token. ', err))
   }
+  useEffect(()=>{
+    if (showNotificationBanner) {
+      if(window.confirm("The app needs permission to enable push notifications"))handleGetFirebaseToken()
+    }
+  },[])
   return (
     <div className='App'>
       {' '}
-      {showNotificationBanner && <div className="notification-banner">
-        <span>The app needs permission to</span>
-        <a
-          href="#"
-          className="notification-banner-link"
-          onClick={handleGetFirebaseToken}
-        >
-          enable push notifications.
-        </a>
-      </div>}
+    
       <RoutesContainer />
       <ToastContainer />
     </div>
