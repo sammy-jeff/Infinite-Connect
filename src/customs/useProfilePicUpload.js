@@ -87,7 +87,7 @@ function useProfilePicUpload(img, setImg, setLoading) {
               })
             })
             // update avatar for post(user) Images here
-            toast.success('Profile picture successfully uploaded', {
+            toast.success('Profile picture uploaded successfully', {
               delay: 2000,
               position: 'bottom-right',
             })

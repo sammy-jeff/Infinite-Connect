@@ -201,7 +201,7 @@ function Comments({ commt, setComment_text, post,postId }) {
       <>
         <div className={styles.comments}>
           <div className={styles.img__container__comments}>
-            <img src={commt?.avatar || `user.png`} alt='' />
+            <img src={commt?.avatar || `/user.png`} alt='' />
           </div>
           <div className={styles.comment__body}>
             <div className={styles.user__comment}>

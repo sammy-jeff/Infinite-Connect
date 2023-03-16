@@ -91,7 +91,7 @@ function Replies({ repl, setReply_text, setReply, post, commt,postId }) {
   return (
     <>
       <div className={styles.img__container__comments}>
-        <img src={repl?.avatar || `user.png`} alt='' />
+        <img src={repl?.avatar || `/user.png`} alt='' />
       </div>
       <div className={styles.comment__body}>
         <div className={styles.user__comment}>
