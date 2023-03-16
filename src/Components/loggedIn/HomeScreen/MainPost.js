@@ -149,7 +149,7 @@ function MainPost({ post }) {
   return (
     <article className={styles.main__post}>
       <div className={styles.user}>
-        <img src={post?.avatar || `user.png`} alt='profile__pics' />
+        <img src={post?.avatar || `/user.png`} alt='profile__pics' />
 
         <div className={styles.name__time}>
           <Link to={`/about/${post?.author_id}`}>
