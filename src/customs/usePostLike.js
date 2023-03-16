@@ -5,7 +5,7 @@ import { auth, db } from '../firebase'
 
 function usePostLike(article, articleStr, id, docLike, setLikeLoad) {
   const { user } = useSelector((state) => state.user.value)
-  const filterIds = article.likedBy.map((element) => {
+  const filterIds = article?.likedBy.map((element) => {
     return element.uid
   })
   const handleLike = async () => {
@@ -33,7 +33,7 @@ function usePostLike(article, articleStr, id, docLike, setLikeLoad) {
                 docLike,
                 {
                   reaction_count: increment(1),
-                  likedBy: [...article.likedBy, ...likedByArr],
+                  likedBy: [...article?.likedBy, ...likedByArr],
                 },
                 { merge: true }
               )

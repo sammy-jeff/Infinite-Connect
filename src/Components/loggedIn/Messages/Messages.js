@@ -26,12 +26,14 @@ import { toast } from 'react-toastify'
 import MessageCenter from './MessageCenter'
 import { faCommentAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { msgIds } from '../../../helpers/msgIds'
+import { Outlet } from 'react-router-dom'
 
 function Messages() {
   const { user } = useSelector((state) => state.user.value)
   const [usersFill, setusersFill] = useState([])
   const { chat, showMsg } = useSelector((state) => state.chats)
-
+  
   const user1 = auth.currentUser.uid
 
   const q = query(
@@ -156,7 +158,7 @@ function Messages() {
       if (text || msgImg) {
         setMsgLoad(true)
         const user2 = chat.id
-        const id = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`
+        const id = msgIds(user1,user2)
         await addDoc(collection(db, 'messages', id, 'chat'), {
           text: text,
           from: user1,
@@ -238,7 +240,7 @@ function Messages() {
               {chat ? (
                 <>
                   {' '}
-                  <MessageCenter
+                  {/* <MessageCenter
                     setImg={setImg}
                     setText={setText}
                     handleSubmit={handleSubmit}
@@ -247,8 +249,10 @@ function Messages() {
                     msgLoad={msgLoad}
                     imgLoad={imgLoad}
                     msgImg={msgImg}
-                  />
+                  /> */}
+                  <Outlet context={[setImg,setText,handleSubmit,text,user1,msgLoad,imgLoad,msgImg]}/>
                 </>
+
               ) : (
                 <h1 className={styles.gray}>
                   Please select a user, to start conversation

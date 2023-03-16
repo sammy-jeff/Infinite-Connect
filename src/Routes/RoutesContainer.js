@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 import styles from '../CSS/loggedInCss/home.module.css'
+import MainPostContent from '../Components/loggedIn/HomeScreen/MainPostContent'
+import MessageCenter from '../Components/loggedIn/Messages/MessageCenter'
 
 const Home = lazy(() => import('../Components/loggedIn/HomeScreen/Home'))
 const Messages = lazy(() => import('../Components/loggedIn/Messages/Messages'))
@@ -88,9 +90,13 @@ function RoutesContainer() {
               <Route element={<ProtectedRoutes />}>
                 {user ? (
                   <>
-                    <Route path='home' element={<Home />} />
-
-                    <Route path='messaging' element={<Messages />}></Route>
+                    <Route path='home' element={<Home />}>
+                      <Route path=':nameId/thread/:postId' element={<MainPostContent/>}/>
+                    </Route>
+                      
+                    <Route path='messaging' element={<Messages />}>
+                      <Route path=':msgId' element={<MessageCenter/>}/>
+                    </Route>
                     <Route path='about/:id' element={<About />}></Route>
                   </>
                 ) : (

@@ -46,18 +46,21 @@
   flex-direction: column;
   box-sizing: border-box;
   margin-top: 20px;
-  /* gap: 5px; */
+  gap: 15px;
 }
 
 .user {
-  display: grid;
-  grid-template-columns: 1fr 5.8fr 1fr;
+  display: flex;
   align-items: center;
   /* gap: 15px; */
 }
 .name__time {
   display: flex;
   flex-direction: column;
+  flex: 2;
+  padding-inline: 0.7rem;
+  justify-content: center;
+  
 }
 .name__time small {
   color: #000000e6;
@@ -73,7 +76,7 @@
   margin-left: 6px;
 }
 .user svg {
-  justify-self: center;
+  justify-self: flex-end;
 }
 
 .user img {
@@ -198,6 +201,13 @@
   cursor: pointer;
   column-gap: 15px;
   border-radius: 7px;
+}
+.cta__list li a{
+  display: flex;
+  gap:10px;
+  text-decoration: none;
+  color: #000000e6;
+  
 }
 .cta__list li p {
   display: none;

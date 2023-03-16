@@ -25,7 +25,7 @@ import React, { useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { v4 } from 'uuid'
-import styles from '../../../CSS/loggedInCss/middleMain.module.css'
+import styles from '../../../CSS/loggedInCss/mainPostContent.module.css'
 import useLikeModal from '../../../customs/useLikeModal'
 import { Link } from 'react-router-dom'
 import usePagination from '../../../customs/usePagination'
@@ -40,7 +40,7 @@ import {
 import { auth, db } from '../../../firebase'
 import Replies from './Replies'
 import { toast } from 'react-toastify'
-function Comments({ commt, setComment_text, post }) {
+function Comments({ commt, setComment_text, post,postId }) {
   const [reply, setReply] = useState(false)
   const [reply_text, setReply_text] = useState('')
   const [repliesLoad, setRepliesLoad] = useState(false)
@@ -54,8 +54,8 @@ function Comments({ commt, setComment_text, post }) {
 
   const [hasMorePages_replies, setHasMorePages_replies] = useState(false)
 
-  const colRef = collection(collection(db, 'posts'), post.id, 'comments')
-  const commentRef = doc(doc(db, 'posts', post.id), 'comments', commt.data_id)
+  const colRef = collection(collection(db, 'posts'), postId, 'comments')
+  const commentRef = doc(doc(db, 'posts', postId), 'comments', commt?.id)
   const pageSize = 2
 
   const truncateText = useTruncation()
@@ -64,7 +64,7 @@ function Comments({ commt, setComment_text, post }) {
     e.target.style.height = `${e.target.scrollHeight}px`
   }
   usePagination(
-    `/posts/${post.id}/comments/${commt.data_id}/replies`,
+    `/posts/${postId}/comments/${commt?.id}/replies`,
     setHasMorePages_replies,
     setReplies1,
     replies,
@@ -73,7 +73,7 @@ function Comments({ commt, setComment_text, post }) {
     setRepliesLoad
   )
   const paginatedData = usePagination(
-    `/posts/${post.id}/comments/${commt.data_id}/replies`,
+    `/posts/${postId}/comments/${commt?.id}/replies`,
     setHasMorePages_replies,
     setReplies1,
     replies,
@@ -84,14 +84,14 @@ function Comments({ commt, setComment_text, post }) {
   const dispatch = useDispatch()
   const handleLike = usePostLike(
     commt,
-    `/posts/${post.id}/comments`,
-    commt.data_id,
+    `/posts/${postId}/comments`,
+    commt?.id,
     commentRef,
     setLikeLoad
   )
   const handleLikedByList = useLikeModal()
   const q = query(
-    collection(db, `/posts/${post.id}/comments/${commt.data_id}/replies`),
+    collection(db, `/posts/${postId}/comments/${commt?.id}/replies`),
     orderBy('createdAt', 'asc'),
     limit(pageSize)
   )
@@ -122,11 +122,11 @@ function Comments({ commt, setComment_text, post }) {
         id,
         ...others
       } = user
-      await addDoc(collection(colRef, commt.data_id, 'replies'), {
+      await addDoc(collection(colRef, commt?.id, 'replies'), {
         ...others,
         author_name: user?.name,
         author_id: auth.currentUser.uid,
-        parent_id: commt.data_id,
+        parent_id: commt?.id,
         avatar: user?.avatar,
         avatarPath: user?.avatarPath,
         createdAt: Timestamp.fromDate(new Date()),
@@ -136,12 +136,12 @@ function Comments({ commt, setComment_text, post }) {
         body: reply_text,
         updateFlag_id_repl: v4(),
       })
-      await getDocs(collection(db, `/posts/${post.id}/comments`)).then(
+      await getDocs(collection(db, `/posts/${postId}/comments`)).then(
         (snapshot) => {
           snapshot.forEach(async (snap) => {
-            if (snap.id === commt.data_id) {
+            if (snap.id === commt?.id) {
               await updateDoc(commentRef, {
-                replies_count: commt.replies_count + 1,
+                replies_count: commt?.replies_count + 1,
               })
             }
           })
@@ -163,16 +163,16 @@ function Comments({ commt, setComment_text, post }) {
       try {
         await getDocs(q).then((res) => {
           res.forEach(async (snap) => {
-            if (snap.data().parent_id === commt.data_id)
+            if (snap.data().parent_id === commt?.id)
               await deleteDoc(doc(commentRef, 'replies', snap.id))
           })
         })
         await deleteDoc(commentRef)
         await getDocs(collection(db, 'posts')).then((snapshot) => {
           snapshot.forEach(async (snap) => {
-            if (snap.id === post.id) {
-              await updateDoc(doc(db, 'posts', snap.id), {
-                comment_count: post.comment_count > 0 ? increment(-1) : 0,
+            if (snap.id === postId) {
+              await updateDoc(doc(db, 'posts', snap?.id), {
+                comment_count: post?.comment_count > 0 ? increment(-1) : 0,
               })
             }
           })
@@ -189,10 +189,10 @@ function Comments({ commt, setComment_text, post }) {
   const handleTag = () => {
     setReply(true)
     setReply_text(
-      commt.author_id === auth.currentUser.uid ? '' : `@${commt.author_name}`
+      commt?.author_id === auth.currentUser.uid ? '' : `@${commt?.author_name}`
     )
   }
-  const filterIds = commt.likedBy.map((element) => {
+  const filterIds = commt?.likedBy.map((element) => {
     return element.uid
   })
 
@@ -216,14 +216,14 @@ function Comments({ commt, setComment_text, post }) {
                     />
                   )}
                 </span>{' '}
-                {post.author_id === commt.author_id && (
+                {post?.author_id === commt?.author_id && (
                   <small className={styles.author__indicator}>author</small>
                 )}
               </Link>
-              <small>{moment(commt.createdAt.toDate()).fromNow(true)}</small>
+              <small>{moment(commt?.createdAt.toDate()).fromNow(true)}</small>
             </div>
             <p className={styles.comment__proper}>
-              {truncateText(commt.body, 80)}
+              {truncateText(commt?.body, 80)}
             </p>
           </div>
           <div className={styles.comment__actions}>
@@ -301,6 +301,7 @@ function Comments({ commt, setComment_text, post }) {
                 setReply={setReply}
                 post={post}
                 commt={commt}
+                postId={postId}
               />
             ))}
 

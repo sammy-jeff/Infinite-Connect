@@ -127,8 +127,6 @@
   font-size: 0.9rem;
 }
 .signOut__container div :nth-child(2){
-
-  
   max-width: 60px;
   white-space: nowrap;
   overflow: hidden;

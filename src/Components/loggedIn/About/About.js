@@ -27,6 +27,7 @@ import {
 } from 'firebase/storage'
 import useSelectUser from '../../../customs/useSelectUser'
 import { useMemo } from 'react'
+import { msgIds } from '../../../helpers/msgIds'
 
 const UpdateProfileModal = lazy(() => import('./UpdateProfileModal'))
 function About() {
@@ -148,8 +149,8 @@ function About() {
             </h2>
             {userAbout?.id !== auth.currentUser.uid ? (
               <Link
-                to={`/messaging`}
-                onClick={() => selectUser(userAbout, width)}>
+                to={`/messaging/${msgIds(auth.currentUser.uid,id)}`}
+                onClick={() => selectUser(userAbout, width,id)}>
                 Message
               </Link>
             ) : null}

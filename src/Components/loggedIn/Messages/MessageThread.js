@@ -14,11 +14,14 @@ import { db } from '../../../firebase'
 import useSelectUser from '../../../customs/useSelectUser'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
+import { msgIds } from '../../../helpers/msgIds'
+import { Link } from 'react-router-dom'
 
 function MessageThread({ u, user1, width }) {
   const { chat } = useSelector((state) => state.chats)
-
+  
   const [data, setData] = useState(null)
+  
   const mainStr = u.chat_id
   const lastChat_id = mainStr.split(user1).join('')
 
@@ -31,11 +34,13 @@ function MessageThread({ u, user1, width }) {
     return () => unsub()
     // eslint-disable-next-line
   }, [])
+  const id = msgIds(user1,data?.id)
   const selectUser = useSelectUser()
   return (
-    <div
+    <Link
+    to={`${id}`}
       className={chat?.id === data?.id ? styles.active_chat : styles.user}
-      onClick={() => selectUser(data, width)}>
+      onClick={() => selectUser(data, width,data?.id)}>
       <div className={styles.userPics__container}>
         <img src={data?.avatar || `/user.png`} alt='user_pics' />{' '}
         <FontAwesomeIcon
@@ -74,7 +79,7 @@ function MessageThread({ u, user1, width }) {
           {u?.from !== user1 && u?.unread ? `n` : null}
         </p>
       </div>
-    </div>
+    </Link>
   )
 }
 

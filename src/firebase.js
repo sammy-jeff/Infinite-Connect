@@ -3,7 +3,7 @@ import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
-import { getMessaging, getToken, onMessage } from 'firebase/messaging'
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -47,28 +47,8 @@ const db = getFirestore(app)
 // create auth
 const auth = getAuth(app)
 // create push notification
-const messaging = getMessaging(app)
-export const getOrRegisterServiceWorker = () => {
-  if ('serviceWorker' in navigator) {
-    return window.navigator.serviceWorker
-      .getRegistration('/firebase-push-notification-scope')
-      .then((serviceWorker) => {
-        if (serviceWorker) return serviceWorker;
-        return window.navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-          scope: '/firebase-push-notification-scope',
-        });
-      });
-  }
-  throw new Error('The browser doesn`t support service worker.');
-};
- const getFirebaseToken = () =>
-  getOrRegisterServiceWorker()
-    .then((serviceWorkerRegistration) =>
-      getToken(messaging, { vapidKey:process.env.NODE_ENV==="production"?"BPzE8xZxuqOOjAK-bLMUtVbqjsnj5eTsFQfn_i5ZhFU2YUWHOy1soqcEb_Q-yG3qyL0aADf_cjbs9KYYaQcAOuE":"BLSE9S7wJhe_YL4XomjTcD00vTAGrLha_8cDBJPK2gkMnAO20TIVpA0vV56fVDKb_MeY7v2EyFZll2G652CEV_Q", serviceWorkerRegistration }));
 
- const onForegroundMessage = () =>
-  new Promise((resolve) => onMessage(messaging, (payload) => resolve(payload)));
 // create storage
 const storage = getStorage(app)
 
-export { auth, db, storage,onForegroundMessage,getFirebaseToken }
+export { auth, db, storage}

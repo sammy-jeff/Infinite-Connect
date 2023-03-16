@@ -60,9 +60,9 @@ function MiddleMain() {
     postMemo,
     setLoading
   )
-  useEffect(() => {
-    setLoading(true)
-  }, [posts.length])
+  // useEffect(() => {
+  //   setLoading(true)
+  // }, [posts.length])
   return (
     <>
       {posts.length === 0 ? (

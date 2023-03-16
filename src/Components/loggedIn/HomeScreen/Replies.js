@@ -30,14 +30,14 @@ import {
 } from '../../../features/replies'
 import { auth, db } from '../../../firebase'
 
-function Replies({ repl, setReply_text, setReply, post, commt }) {
+function Replies({ repl, setReply_text, setReply, post, commt,postId }) {
   const [likeLoad, setLikeLoad] = useState(false)
   const { user } = useSelector((state) => state.user.value)
   const dispatch = useDispatch()
-  const commentRef = doc(doc(db, 'posts', post.id), `comments`, commt.data_id)
+  const commentRef = doc(doc(db, 'posts', postId), `comments`, commt?.id)
   const handleLike = usePostLike(
     repl,
-    `/posts/${post.id}/comments/${commt.data_id}/replies`,
+    `/posts/${postId}/comments/${commt?.id}/replies`,
     repl.data_id,
     doc(commentRef, 'replies', repl.data_id),
     setLikeLoad
@@ -58,10 +58,10 @@ function Replies({ repl, setReply_text, setReply, post, commt }) {
     if (confirm) {
       try {
         await deleteDoc(doc(commentRef, 'replies', repl.data_id))
-        await getDocs(collection(db, `/posts/${post.id}/comments`)).then(
+        await getDocs(collection(db, `/posts/${postId}/comments`)).then(
           (snapshot) => {
             snapshot.forEach(async (snap) => {
-              if (snap.id === commt.data_id) {
+              if (snap.id === commt?.id) {
                 await updateDoc(commentRef, {
                   replies_count: commt.replies_count > 0 ? increment(-1) : 0,
                 })

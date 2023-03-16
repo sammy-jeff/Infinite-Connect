@@ -14,11 +14,12 @@ import { auth, db } from '../../../firebase'
 import SharedLayout from '../../SharedLayout'
 
 import useSelectUser from '../../../customs/useSelectUser'
+import { msgIds } from '../../../helpers/msgIds'
 
 function RightSide() {
   const [usersFill, setusersFill] = useState([])
   const [width, setWidth] = useState(window.innerWidth)
-
+  const user1  = auth.currentUser.uid
   const q = query(
     collection(db, 'users'),
     where('id', '!=', auth?.currentUser?.uid),
@@ -57,7 +58,7 @@ function RightSide() {
         {usersFill.map((u) => {
           return (
             <div className={styles.suggestions} key={u.id}>
-              <img src={u.avatar || `user.png`} alt='' />
+              <img src={u.avatar || `/user.png`} alt='' />
 
               <div className={styles.sugs__info__container}>
                 <Link to={`/about/${u.id}`}>
@@ -74,9 +75,9 @@ function RightSide() {
                 </Link>
                 <p>{u?.work || u?.email}</p>
                 <Link
-                  to={`/messaging`}
+                  to={`/messaging/${msgIds(user1,u.id)}`}
                   className={styles.follow}
-                  onClick={() => selectUser(u, width)}>
+                  onClick={() => selectUser(u, width,u?.id)}>
                   <FontAwesomeIcon icon={faPaperPlane} />
                   message
                 </Link>

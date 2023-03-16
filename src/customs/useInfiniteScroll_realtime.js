@@ -18,6 +18,7 @@ function useInfiniteScroll_realtime(
 
   useEffect(() => {
     const scroll = (observer) => {
+      setLoading(true)
       const getSnapshot = onSnapshot(next, (querySnapShot) => {
         let dataAdd = []
         if (!querySnapShot?.empty) {
@@ -29,7 +30,7 @@ function useInfiniteScroll_realtime(
         }
         if (querySnapShot.empty) {
           setLoading(false)
-          observer.unobserve(pageEnd?.current)
+          observer?.unobserve(pageEnd?.current)
         }
       })
 
@@ -48,13 +49,15 @@ function useInfiniteScroll_realtime(
       },
       { threshold: 0.4, root: rootElem || null }
     )
-
-    observer.observe(pageEnd?.current)
+      if (!pageEnd?.current) {
+        return
+      }
+    observer?.observe(pageEnd?.current)
     isMounted.current = true
 
     return () => observer.disconnect()
     // eslint-disable-next-line
-  }, [intersectionTracker, article])
+  }, [intersectionTracker, article,pageEnd])
 }
 
 export default useInfiniteScroll_realtime

@@ -8,6 +8,7 @@ import LikedByModal from './LikedByModal'
 import AboutForm from './AboutForm'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import { Outlet } from 'react-router-dom'
 function Home() {
   const { postModal } = useSelector((state) => state.postModal)
 
@@ -21,6 +22,7 @@ function Home() {
         {postModal && <CreatePost />}
         {isModalOpen && <LikedByModal />}
         {isProfileCompleted && <AboutForm />}
+        <Outlet/>
       </Layout>
     </div>
   )

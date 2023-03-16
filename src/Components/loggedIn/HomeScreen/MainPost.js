@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 import styles from '../../../CSS/loggedInCss/middleMain.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -41,6 +41,8 @@ import Gallery from './Gallery'
 import moment from 'moment'
 import useLikeModal from '../../../customs/useLikeModal'
 import { toast } from 'react-toastify'
+import { msgIds } from '../../../helpers/msgIds'
+import useSelectUser from '../../../customs/useSelectUser'
 const CommentMemo = memo(Comments)
 function MainPost({ post }) {
   const [comment, setComment] = useState(false)
@@ -97,66 +99,9 @@ function MainPost({ post }) {
 
   const truncateText = useTruncation()
   const handleLikedByList = useLikeModal()
-  const docRef = doc(db, 'posts', post.id)
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault()
-    setCommentPostLoad(true)
-    if (updateFlag) {
-      comments.map(async (commt) => {
-        if (commt.updateFlag_id === activeUpdateId) {
-          await updateDoc(doc(docRef, 'comments', commt.data_id), {
-            body: comment_text,
-          })
-        }
-        dispatch(setActiveUpdateId(null))
-        dispatch(setUpdateFlag(false))
-      })
-      setComment_text('')
-    } else {
-      const {
-        isOnline,
-        avatarPath,
-        createdAt,
-        email,
-        friendsList,
-        avatar,
-        name,
-        id,
-        ...others
-      } = user
-      await addDoc(collection(postRef, post.id, 'comments'), {
-        ...others,
-        author_name: user?.name,
-        author_id: auth.currentUser.uid,
-        parent_id: post.id,
-        avatar: user?.avatar,
-        avatarPath: user?.avatarPath,
-        createdAt: Timestamp.fromDate(new Date()),
-        reactions: [],
-        reaction_count: 0,
-        likedBy: [],
-        replies_count: 0,
-        body: comment_text,
-        updateFlag_id: v4(),
-      })
-      await getDocs(collection(db, 'posts')).then((snapshot) => {
-        snapshot.forEach(async (snap) => {
-          if (snap.id === post.id) {
-            await updateDoc(doc(db, 'posts', snap.id), {
-              comment_count: increment(1),
-            })
-          }
-        })
-      })
-      setComment_text('')
-    }
-    setCommentPostLoad(false)
-  }
-  const handleKeyDownComments = (e) => {
-    e.target.style.height = 'inherit'
-    e.target.style.height = `${e.target.scrollHeight}px`
-  }
-  const filterIds = post.likedBy.map((element) => {
+  
+
+  const filterIds = post?.likedBy.map((element) => {
     return element.uid
   })
   const deletePost = async () => {
@@ -200,6 +145,7 @@ function MainPost({ post }) {
     setGalleryImg(post?.media[index])
   }
   const sliceMedia = post?.media.slice(0, 4)
+  const selectUser = useSelectUser()
   return (
     <article className={styles.main__post}>
       <div className={styles.user}>
@@ -276,10 +222,12 @@ function MainPost({ post }) {
           ) : null}
         </p>
         {post.comment_count > 0 ? (
-          <p onClick={() => setComment(true)}>
+          <Link to={`${post.author_name}/thread/${post.id}`} style={{color:"#00000099"}}>
+            <p onClick={() => setComment(true)}>
             {post.comment_count}{' '}
             {post.comment_count > 1 ? 'comments' : 'comment'}
           </p>
+          </Link>
         ) : null}
       </div>
       <div className={styles.cta}>
@@ -301,86 +249,19 @@ function MainPost({ post }) {
               </>
             )}
           </li>
-          <li onClick={() => setComment(true)}>
-            <FontAwesomeIcon icon={faComment} />
-            <p>Comment</p>
-          </li>
+          <Link to={`${post.author_name}/thread/${post.id}`}>
           <li>
+            <FontAwesomeIcon icon={faComment} />
+            <p>Comments</p>
+          </li>
+          </Link>
+          {/* <li>
             <FontAwesomeIcon icon={faShare} />
             <p>Share</p>
-          </li>
-          <li>
-            <FontAwesomeIcon icon={faPaperPlane} />
-            <p>Send</p>
-          </li>
+          </li> */}
+        
         </ul>
       </div>
-      {comment && (
-        <div>
-          <div className={styles.post__comment}>
-            <div className={styles.img__container__comments}>
-              <img src={user.avatar || `user.png`} alt='' />
-            </div>
-            <form onSubmit={handleCommentSubmit}>
-              <div className={styles.text__area__container}>
-                <textarea
-                  placeholder='Add a Comment'
-                  value={comment_text}
-                  name='comment'
-                  onChange={handleChange}
-                  onKeyDown={handleKeyDownComments}></textarea>
-                {/* <FontAwesomeIcon icon={faImage} /> */}
-              </div>
-              {comment_text.length > 1 && (
-                <button
-                  type='submit'
-                  className={styles.button__blue}
-                  disabled={commentPostLoad ? true : false}>
-                  {commentPostLoad ? (
-                    <FontAwesomeIcon
-                      className={styles.spinner}
-                      icon={faCircleNotch}
-                    />
-                  ) : (
-                    `Post`
-                  )}
-                </button>
-              )}
-            </form>
-          </div>
-          {comments.length ? (
-            comments?.map((commt) => (
-              <div
-                key={commt?.data_id}
-                className={commentPostLoad ? styles.comment_opaque : ''}>
-                {' '}
-                <CommentMemo
-                  commt={commt}
-                  setComment_text={setComment_text}
-                  post={post}
-                  commentPostLoad={commentPostLoad}
-                />
-              </div>
-            ))
-          ) : (
-            <div className={styles.nil}>
-              <FontAwesomeIcon icon={faComment} />
-              <p>No comments yet</p>
-              <p>be the first to comment</p>
-            </div>
-          )}
-
-          {hasMorePages && comments.length >= pageSize ? (
-            <button
-              className={styles.comment__load}
-              onClick={() => paginatedFunc(4)}
-              disabled={loading ? true : false}>
-              load more comments{' '}
-              {loading && <FontAwesomeIcon icon={faSpinner} />}
-            </button>
-          ) : null}
-        </div>
-      )}
       {showGallery && (
         <Gallery
           setShowGallery={setShowGallery}
@@ -389,6 +270,7 @@ function MainPost({ post }) {
           setGalleryImg={setGalleryImg}
         />
       )}
+   
     </article>
   )
 }
