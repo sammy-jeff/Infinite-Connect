@@ -37,8 +37,8 @@ function MessageThread({ u, user1, width }) {
   const id = msgIds(user1,data?.id)
   const selectUser = useSelectUser()
   return (
-    <Link
-    to={`${id}`}
+    <div
+   
       className={chat?.id === data?.id ? styles.active_chat : styles.user}
       onClick={() => selectUser(data, width,data?.id)}>
       <div className={styles.userPics__container}>
@@ -79,7 +79,7 @@ function MessageThread({ u, user1, width }) {
           {u?.from !== user1 && u?.unread ? `n` : null}
         </p>
       </div>
-    </Link>
+    </div>
   )
 }
 

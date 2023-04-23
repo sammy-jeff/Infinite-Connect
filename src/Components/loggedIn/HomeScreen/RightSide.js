@@ -75,7 +75,7 @@ function RightSide() {
                 </Link>
                 <p>{u?.work || u?.email}</p>
                 <Link
-                  to={`/messaging/${msgIds(user1,u.id)}`}
+                  to={`/messaging`}
                   className={styles.follow}
                   onClick={() => selectUser(u, width,u?.id)}>
                   <FontAwesomeIcon icon={faPaperPlane} />

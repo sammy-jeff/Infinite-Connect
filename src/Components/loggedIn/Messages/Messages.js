@@ -240,7 +240,7 @@ function Messages() {
               {chat ? (
                 <>
                   {' '}
-                  {/* <MessageCenter
+                  <MessageCenter
                     setImg={setImg}
                     setText={setText}
                     handleSubmit={handleSubmit}
@@ -249,8 +249,8 @@ function Messages() {
                     msgLoad={msgLoad}
                     imgLoad={imgLoad}
                     msgImg={msgImg}
-                  /> */}
-                  <Outlet context={[setImg,setText,handleSubmit,text,user1,msgLoad,imgLoad,msgImg]}/>
+                  />
+                  {/* <Outlet context={[setImg,setText,handleSubmit,text,user1,msgLoad,imgLoad,msgImg]}/> */}
                 </>
 
               ) : (

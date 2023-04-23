@@ -12,22 +12,25 @@ import {
   query,
   startAfter,
 } from 'firebase/firestore'
-import { db } from '../../../firebase'
+import { auth, db } from '../../../firebase'
 import { setMessages } from '../../../features/messages'
 import useInfiniteScroll_realtime from '../../../customs/useInfiniteScroll_realtime'
 import useTruncation from '../../../customs/useTruncation'
 import moment from 'moment'
-function MessageBody({ user1, imgLoad,msgId }) {
+import { msgIds } from '../../../helpers/msgIds'
+function MessageBody({ imgLoad }) {
   const { messages } = useSelector((state) => state.messages)
   const { chat } = useSelector((state) => state.chats)
-
+  const user1= auth.currentUser.uid
+  const user2 = chat?.id
+  // const ids=msgIds(user1,user2)
   const msgMemo = useMemo(() => messages, [messages])
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
-  const user2 = chat?.id
-  // const id = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`
+ console.log(messages)
+  const id = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`
   const q = query(
-    collection(db, `/messages/${msgId}/chat`),
+    collection(db, `/messages/${id}/chat`),
     orderBy('createdAt', 'desc'),
     limit(8)
   )
@@ -46,7 +49,7 @@ function MessageBody({ user1, imgLoad,msgId }) {
     // eslint-disable-next-line
   }, [chat])
   const next = query(
-    collection(db, `/messages/${msgId}/chat`),
+    collection(db, `/messages/${id}/chat`),
     orderBy('createdAt', 'desc'),
     startAfter(messages[messages.length - 1]?.createdAt || 0),
     limit(4)
@@ -78,8 +81,8 @@ function MessageBody({ user1, imgLoad,msgId }) {
           return (
             <div key={message.id}>
               {' '}
-              {message?.from + message?.to === msgId ||
-              message?.to + message?.from === msgId ? (
+              {message?.from + message?.to === id ||
+              message?.to + message?.from === id ? (
                 <div
                   className={
                     message.from === user1 ? styles.wrapper : styles.own

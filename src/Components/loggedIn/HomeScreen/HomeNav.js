@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import styles from '../../../CSS/loggedInCss/homenav.module.css'
 import {
-  faCaretDown,
+  
   faCommentDots,
-  faDoorOpen,
+  
   faHome,
   faInfinity,
   faSearch,
@@ -12,7 +12,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { signOut } from 'firebase/auth'
 import { auth, db } from '../../../firebase'
-import { collection, doc, updateDoc } from 'firebase/firestore'
+import {  doc, updateDoc } from 'firebase/firestore'
 import { Link, NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import SearchResults from './SearchResults'
@@ -23,7 +23,7 @@ function HomeNav({ showInput, setShowInput }) {
 
   const breakPoint = 801
   const [width, setWidth] = useState(window.innerWidth)
-  // const [badgeCount, setBadgeCount] = useState(0)
+ 
   const [searchText, setSearchText] = useState('')
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
@@ -132,7 +132,7 @@ function HomeNav({ showInput, setShowInput }) {
             {loading ? (
               <FontAwesomeIcon className={styles.spinner} icon={faSpinner} />
             ) : (
-              // <FontAwesomeIcon icon={faDoorOpen} onClick={handleSignOut} />
+             
               <div onClick={handleSignOut}>
                 <p>logout</p>
                 <p>{user?.name}</p>

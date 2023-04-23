@@ -94,9 +94,8 @@ function RoutesContainer() {
                       <Route path=':nameId/thread/:postId' element={<MainPostContent/>}/>
                     </Route>
                       
-                    <Route path='messaging' element={<Messages />}>
-                      <Route path=':msgId' element={<MessageCenter/>}/>
-                    </Route>
+                    <Route path='messaging' element={<Messages />}/>
+                     
                     <Route path='about/:id' element={<About />}></Route>
                   </>
                 ) : (

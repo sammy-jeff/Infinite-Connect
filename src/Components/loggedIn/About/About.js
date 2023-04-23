@@ -149,8 +149,9 @@ function About() {
             </h2>
             {userAbout?.id !== auth.currentUser.uid ? (
               <Link
-                to={`/messaging/${msgIds(auth.currentUser.uid,id)}`}
-                onClick={() => selectUser(userAbout, width,id)}>
+              to={`/messaging`}
+              className={styles.follow}
+              onClick={() => selectUser(userAbout, width,id)}>
                 Message
               </Link>
             ) : null}
