@@ -4,15 +4,14 @@ import MessageBody from './MessageBody'
 import MessageForm from './MessageForm'
 import MessageHead from './MessageHead'
 
-function MessageCenter(setImg,
+function MessageCenter({setImg,
   setText,
   handleSubmit,
   text,
   user1,
-    
   msgLoad,
   imgLoad,
-  msgImg,) {
+  msgImg,}) {
   
   return (
     <>
