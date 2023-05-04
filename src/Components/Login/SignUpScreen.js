@@ -5,52 +5,37 @@ import Footer from './Footer'
 import useSignUp from '../../customs/useSignUp'
 import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfinity, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash, faInfinity, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import {useFormik} from "formik"
+import { signUpValidation } from '../../helpers/validation'
 function SignUpScreen({ showPassword, setShowPassword }) {
-  let initialState = {
+  const initialValues = {
     username: '',
     email: '',
     password: '',
   }
-  const { isLoadingAuth } = useSelector((state) => state.userAuth)
-  const [text, setText] = useState(initialState)
-  const [testRegex, setTestRegex] = useState({ email: false, password: false })
-  const [val1, setVal1] = useState(false)
-  const [val2, setVal2] = useState(false)
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setText({ ...text, [name]: value })
+  const handleSubmit =useSignUp()
+  const onSubmit = (values)=>{
+    handleSubmit(values.username,values.email,values.password)
   }
-  //Start validating Email
-  const regexes = {
-    email:
-      /^([a-z0-9\.-]+)@([a-z|\d]+)\.([a-z]{3,8})(\.[a-z]{2,8})?$|(^[\d]{11,11}$)/,
-    password: /^[A-Za-z0-9]{8,}$/,
-  }
+  const formik = useFormik({
+    initialValues,
+    onSubmit,
+    validate:signUpValidation,
+  })
 
-  const validateEmail = (e) => {
-    const { name } = e.target
-    if (text.email.length < 1) {
-      setVal1(true)
-    } else if (!regexes.email.test(text.email)) {
-      setTestRegex({ ...testRegex, [name]: true })
-    } else {
-      setTestRegex({ ...testRegex, [name]: false })
-    }
-  }
-  const validatePassword = (e) => {
-    const { name } = e.target
-    if (text.password.length < 1) {
-      setVal2(true)
-    } else if (!regexes.password.test(text.password)) {
-      setTestRegex({ ...testRegex, [name]: true })
-    } else {
-      setTestRegex({ ...testRegex, [name]: false })
-    }
-  }
-  // End Validating user
+  
+  const { isLoadingAuth } = useSelector((state) => state.userAuth)
+
+ 
+
+
+  //Start validating Email
+ 
+
+ 
   // Start Authenticating User
-  const handleSignUp = useSignUp()
+
   // End Authenticating User
   return (
     <div className={styles.signUpScreen}>
@@ -62,51 +47,35 @@ function SignUpScreen({ showPassword, setShowPassword }) {
       <h1>Meet New Friends</h1>
       <form
         className={styles.form}
-        onSubmit={(e) =>
-          handleSignUp(e, text.username, text.email, text.password)
+        onSubmit={
+          formik.handleSubmit
         }>
         <div className={styles.email__phone}>
           <label>Name</label>
           <input
             type='text'
             name='username'
-            // className={val1 ? styles.invalid__input : testRegex.email ? styles.invalid__input : ''}
-            value={text.username}
-            onChange={handleChange}
+            className={
+              formik.errors.username?styles.invalid:styles.input
+            }
+            {...formik.getFieldProps("username")}
           />
+          {formik.errors.username&&formik.touched.username?<span className={styles.error}>{formik.errors.username}</span>:null}
         </div>
-
+        
         <div className={styles.email__phone}>
           <label>Email Address</label>
           <input
             type='email'
             name='email'
             className={
-              val1
-                ? styles.invalid__input
-                : testRegex.email
-                ? styles.invalid__input
-                : ''
+              formik.errors.email?styles.invalid:styles.input
             }
-            value={text.email}
+            {...formik.getFieldProps("email")}
             required
-            onChange={handleChange}
-            onBlur={validateEmail}
-            onFocus={() => {
-              setVal1(false)
-              setTestRegex(false)
-            }}
+          
           />
-          {val1 && (
-            <p className={styles.invalid}>
-              Please enter your email address or phone number
-            </p>
-          )}
-          {testRegex.email && (
-            <p className={styles.invalid}>
-              Please enter a valid email or mobile number
-            </p>
-          )}
+       {formik.errors.email&&formik.touched.email?<span className={styles.error}>{formik.errors.email}</span>:null}
         </div>
 
         <div className={styles.password}>
@@ -116,33 +85,20 @@ function SignUpScreen({ showPassword, setShowPassword }) {
               type={showPassword ? 'text' : 'password'}
               name='password'
               className={
-                val2
-                  ? styles.invalid__input
-                  : testRegex.password
-                  ? styles.invalid__input
-                  : ''
+                formik.errors.password?styles.invalid:styles.input
               }
               required
-              value={text.password}
-              onChange={handleChange}
-              onBlur={validatePassword}
-              onFocus={() => {
-                setVal2(false)
-                setTestRegex(false)
-              }}
+              {...formik.getFieldProps("password")}
             />
             <span
               className={styles.show}
               onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? 'Hide' : 'Show'}
+              {showPassword ?<FontAwesomeIcon icon={faEyeSlash}/>: <FontAwesomeIcon icon={faEye}/>}
             </span>
+           
           </div>
-          {val2 && <p className={styles.invalid}>Please enter your password</p>}
-          {testRegex.password && (
-            <p className={styles.invalid}>
-              Password must be 6 characters or more
-            </p>
-          )}
+          
+          {formik.errors.password&&formik.touched.password?<span className={styles.error}>{formik.errors.password}</span>:null}
         </div>
         <p className={styles.cookie}>
           By clicking Agree & Join, you agree to the Infinite-connect{' '}
@@ -151,24 +107,11 @@ function SignUpScreen({ showPassword, setShowPassword }) {
         </p>
         <button
           type='submit'
+          disabled={isLoadingAuth?true:false}
           className={
-            testRegex.email ||
-            testRegex.password ||
-            isLoadingAuth ||
-            val1 ||
-            val2
-              ? styles.signUpBtn__gray
-              : styles.signUpBtn
+           isLoadingAuth?styles.signUpBtn__gray:styles.signUpBtn
           }
-          disabled={
-            testRegex.email ||
-            testRegex.password ||
-            isLoadingAuth ||
-            val1 ||
-            val2
-              ? true
-              : false
-          }>
+        >
           {isLoadingAuth ? (
             <p>
               Creating...{' '}

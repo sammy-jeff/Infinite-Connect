@@ -1,4 +1,4 @@
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -6,19 +6,21 @@ import styles from '../../../CSS/loginCss/callToaction.module.css'
 import useSignIn from '../../../customs/useSignIn'
 
 import { Link } from 'react-router-dom'
+import { useFormik } from 'formik'
 function CallToAction() {
   const initialValues = {
     email: '',
     password: '',
   }
-  const [values, setValues] = useState(initialValues)
-
   const handleSignIn = useSignIn()
+ const formik = useFormik({
+  initialValues,
+  onSubmit:({email,password})=>handleSignIn(email,password)
+ })
+
+  
   const { isLoadingAuth } = useSelector((state) => state.userAuth)
-  const handleChanges = (e) => {
-    let { name, value } = e.target
-    setValues({ ...values, [name]: value })
-  }
+ 
   const [showPassword, setShowPassword] = useState(false)
 
   return (
@@ -27,11 +29,11 @@ function CallToAction() {
         <h1>Connect The World</h1>
         <form
           className={styles.form}
-          onSubmit={(e) => handleSignIn(e, values.email, values.password)}>
+          onSubmit={formik.handleSubmit}>
           <div className={styles.forEmail}>
             <label
               htmlFor='email'
-              className={values.email.length >= 1 ? styles.active__label : ''}>
+              className={formik.values.email.length >= 1 ? styles.active__label : ''}>
               Email Address
             </label>
             <input
@@ -39,9 +41,8 @@ function CallToAction() {
               name='email'
               id='email'
               className={styles.email__phone}
-              value={values.email}
+              {...formik.getFieldProps("email")}
               required
-              onChange={handleChanges}
             />
           </div>
           <div className={styles.forPassword}>
@@ -50,19 +51,19 @@ function CallToAction() {
               name='password'
               id='password'
               className={styles.password}
-              value={values.password}
+              {...formik.getFieldProps("password")}
               required
-              onChange={handleChanges}
+              
             />
             <label
               htmlFor='password'
               className={
-                values.password.length >= 1 ? styles.active__label : ''
+                formik.values.password.length >= 1 ? styles.active__label : ''
               }>
               Password
             </label>
             <span onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? 'Hide' : 'Show'}
+            {showPassword ?<FontAwesomeIcon icon={faEyeSlash}/>: <FontAwesomeIcon icon={faEye}/>}
             </span>
           </div>
           <Link to={`reset`} className={styles.forgot}>
@@ -71,7 +72,7 @@ function CallToAction() {
           <button
             type='submit'
             className={isLoadingAuth ? styles.gray : styles.signInBtn}
-            onSubmit={(e) => handleSignIn(e, values.email, values.password)}
+          
             disabled={isLoadingAuth ? true : false}>
             {isLoadingAuth ? (
               <p>

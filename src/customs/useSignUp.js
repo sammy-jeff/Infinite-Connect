@@ -10,8 +10,8 @@ function useSignUp() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const handleSignUp = async (e, name, email, password) => {
-    e.preventDefault()
+  const handleSignUp = async (name, email, password) => {
+
     if (!name || !email || !password) return
     try {
       dispatch(setIsLoadingAuth(true))

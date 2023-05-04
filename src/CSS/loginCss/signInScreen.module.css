@@ -24,7 +24,7 @@
 }
 .forEmail,
 .forPassword {
-  width: 100%;
+  margin-top: 10px;
   height: 50px;
   display: flex;
   flex-direction: column;
@@ -37,7 +37,7 @@
   padding: 25px 9px 10px;
   width: 100%;
   color: #00000099;
-  font-size: 1.3rem;
+  font-size: 0.9rem;
   font-weight: 400;
   font-family: 'Times New Roman', Times, serif;
   outline: none;
@@ -48,6 +48,7 @@
   transform: translate(0, 15px) scale(1);
   margin-left: 10px;
   transform-origin: top left;
+
   transition: all 0.2s ease-in-out;
   font-size: 1.1rem;
   font-weight: 100;
@@ -71,7 +72,7 @@
   padding: 25px 9px 10px;
   width: 100%;
   color: #00000099;
-  font-size: 1.3rem;
+  font-size: 0.9rem;
   font-weight: 400;
   font-family: 'Times New Roman', Times, serif;
   outline: none;
@@ -92,10 +93,10 @@
 .forPassword span {
   position: absolute;
   top: 20%;
-  left: 75%;
-  color: #0a66c4;
-  font-size: 1rem;
-  padding: 5px 10px;
+  left: 80%;
+  color: #00000099;
+  font-size: 1.1rem;
+  padding: 5px 8px;
   border-radius: 3px;
   transition: all ease-in-out 200ms;
   cursor: pointer;
@@ -115,7 +116,9 @@
 .forPassword .active__label {
   transform: translate(0, 8px) scale(0.8);
 }
-
+.forPassword svg{
+  color: #00000099;
+}
 .forgot {
   color: #000000;
   font-size: 1.1rem;

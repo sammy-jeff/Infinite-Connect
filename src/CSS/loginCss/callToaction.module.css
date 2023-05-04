@@ -113,7 +113,9 @@
 .forPassword .active__label {
   transform: translate(0, 8px) scale(0.8);
 }
-
+.forPassword svg{
+  color: #00000099;
+}
 .forgot {
   color: #000000;
   font-size: 1.1rem;

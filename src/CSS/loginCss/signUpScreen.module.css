@@ -50,18 +50,22 @@
   flex-direction: column;
   position: relative;
 }
-.invalid {
+.error{
   color: #d11124;
 }
 
-.invalid__input {
-  border: 2px #d11124 solid;
-}
 
+.invalid {
+  border: 1px #d11124 solid;
+}
+.input{
+  border:1px #00000099 solid ;
+}
 .show {
   position: absolute;
   left: 85%;
   top: 20%;
+  color: #00000099;
 }
 
 .cookie {

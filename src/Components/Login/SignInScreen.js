@@ -5,21 +5,23 @@ import Footer from './Footer'
 import useSignIn from '../../customs/useSignIn'
 import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfinity, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash, faInfinity, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { useFormik } from 'formik'
 
 function SignInScreen({ showPassword, setShowPassword }) {
   const initialValues = {
     email: '',
     password: '',
   }
-
-  const [values, setValues] = useState(initialValues)
   const handleSignIn = useSignIn()
+  const formik= useFormik({
+    initialValues,
+    onSubmit:(values)=>handleSignIn(values.email,values.password)
+  })
+  const [values, setValues] = useState(initialValues)
+
   const { isLoadingAuth } = useSelector((state) => state.userAuth)
-  const handleChanges = (e) => {
-    let { name, value } = e.target
-    setValues({ ...values, [name]: value })
-  }
+
 
   return (
     <div className={styles.signInScreen}>
@@ -31,13 +33,13 @@ function SignInScreen({ showPassword, setShowPassword }) {
       <section className={styles.section}>
         <form
           className={styles.form}
-          onSubmit={(e) => handleSignIn(e, values.email, values.password)}>
+          onSubmit={formik.handleSubmit}>
           <h1>Sign in</h1>
           <p>Connect the World</p>
           <div className={styles.forEmail}>
             <label
               htmlFor='email'
-              className={values.email.length >= 1 ? styles.active__label : ''}>
+              className={formik.values.email.length >= 1 ? styles.active__label : ''}>
               Email Address
             </label>
             <input
@@ -46,8 +48,7 @@ function SignInScreen({ showPassword, setShowPassword }) {
               id='email'
               className={styles.email__phone}
               required
-              value={values.email}
-              onChange={handleChanges}
+              {...formik.getFieldProps("email")}
             />
           </div>
           <div className={styles.forPassword}>
@@ -56,19 +57,19 @@ function SignInScreen({ showPassword, setShowPassword }) {
               name='password'
               id='password'
               className={styles.password}
-              value={values.password}
+              {...formik.getFieldProps("password")}
               required
-              onChange={handleChanges}
+             
             />
             <label
               htmlFor='password'
               className={
-                values.password.length >= 1 ? styles.active__label : ''
+                formik.values.password.length >= 1 ? styles.active__label : ''
               }>
               Password
             </label>
             <span onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? 'Hide' : 'Show'}
+            {showPassword ?<FontAwesomeIcon icon={faEyeSlash}/>: <FontAwesomeIcon icon={faEye}/>}
             </span>
           </div>
           <Link to={`/reset`} className={styles.forgot}>
@@ -77,7 +78,7 @@ function SignInScreen({ showPassword, setShowPassword }) {
           <button
             type='submit'
             className={isLoadingAuth ? styles.gray : styles.signInBtn}
-            onSubmit={(e) => handleSignIn(e, values.email, values.password)}
+           
             disabled={isLoadingAuth ? true : false}>
             {isLoadingAuth ? (
               <p>
