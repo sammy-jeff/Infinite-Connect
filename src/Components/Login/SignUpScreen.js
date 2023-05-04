@@ -56,7 +56,7 @@ function SignUpScreen({ showPassword, setShowPassword }) {
             type='text'
             name='username'
             className={
-              formik.errors.username?styles.invalid:styles.input
+              formik.errors.username&&formik.touched.username?styles.invalid:styles.input
             }
             {...formik.getFieldProps("username")}
           />
@@ -69,7 +69,7 @@ function SignUpScreen({ showPassword, setShowPassword }) {
             type='email'
             name='email'
             className={
-              formik.errors.email?styles.invalid:styles.input
+              formik.errors.email&&formik.touched.email?styles.invalid:styles.input
             }
             {...formik.getFieldProps("email")}
             required
@@ -85,7 +85,7 @@ function SignUpScreen({ showPassword, setShowPassword }) {
               type={showPassword ? 'text' : 'password'}
               name='password'
               className={
-                formik.errors.password?styles.invalid:styles.input
+                formik.errors.password&&formik.touched.password?styles.invalid:styles.input
               }
               required
               {...formik.getFieldProps("password")}
