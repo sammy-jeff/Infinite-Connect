@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth'
 import { doc, updateDoc } from 'firebase/firestore'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -21,7 +21,16 @@ function useSignIn() {
       })
 
       dispatch(setIsLoadingAuth(false))
-      navigate('/home', { replace: true })
+      if (!auth?.currentUser.emailVerified) {
+        await sendEmailVerification(auth?.currentUser).then(()=>{
+          alert("Check your email to verify account")
+        })
+        navigate(`/signIn`,{replace:true})
+      }
+      else{
+        window.location.reload()
+      }
+      
     } catch (error) {
       dispatch(setIsLoadingAuth(false))
       alert(error)

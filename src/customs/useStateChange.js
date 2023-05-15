@@ -13,7 +13,7 @@ function useStateChange() {
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (cUser) => {
-      if (cUser) {
+      if (cUser&&cUser?.emailVerified) {
         dispatch(setUserAuth(cUser))
         onSnapshot(doc(db, 'users', cUser.uid), () => {
           getDoc(doc(db, 'users', cUser.uid))

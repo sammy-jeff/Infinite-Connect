@@ -95,6 +95,7 @@ function Comments({ commt, setComment_text, post,postId }) {
     orderBy('createdAt', 'asc'),
     limit(pageSize)
   )
+  // reply submit functionality
   const handleReplySubmit = async (e) => {
     e.preventDefault()
     setReplyPostLoad(true)
@@ -186,6 +187,7 @@ function Comments({ commt, setComment_text, post,postId }) {
       }
     }
   }
+  // Tag users that are interacting on the same reply thread
   const handleTag = () => {
     setReply(true)
     setReply_text(

@@ -15,8 +15,9 @@ function SignUpScreen({ showPassword, setShowPassword }) {
     password: '',
   }
   const handleSubmit =useSignUp()
+  const [verificationMessage,setVerificationMessage] = useState("")
   const onSubmit = (values)=>{
-    handleSubmit(values.username,values.email,values.password)
+    handleSubmit(values.username,values.email,values.password,setVerificationMessage)
   }
   const formik = useFormik({
     initialValues,
@@ -27,16 +28,6 @@ function SignUpScreen({ showPassword, setShowPassword }) {
   
   const { isLoadingAuth } = useSelector((state) => state.userAuth)
 
- 
-
-
-  //Start validating Email
- 
-
- 
-  // Start Authenticating User
-
-  // End Authenticating User
   return (
     <div className={styles.signUpScreen}>
       <header>
@@ -45,6 +36,7 @@ function SignUpScreen({ showPassword, setShowPassword }) {
         </Link>
       </header>
       <h1>Meet New Friends</h1>
+      {verificationMessage&&<p className={styles.verification}>{verificationMessage}</p>}
       <form
         className={styles.form}
         onSubmit={

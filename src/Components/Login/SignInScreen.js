@@ -18,10 +18,7 @@ function SignInScreen({ showPassword, setShowPassword }) {
     initialValues,
     onSubmit:(values)=>handleSignIn(values.email,values.password)
   })
-  const [values, setValues] = useState(initialValues)
-
   const { isLoadingAuth } = useSelector((state) => state.userAuth)
-
 
   return (
     <div className={styles.signInScreen}>

@@ -83,7 +83,7 @@ function LeftSide() {
               <span>
                 <FontAwesomeIcon icon={faCalendarAlt} />
               </span>
-              <Moment interval>{user?.createdAt.toDate()}</Moment>
+              <Moment interval>{user?.createdAt?.toDate()}</Moment>
             </p>
           </div>
           <div className={styles.items}>

@@ -49,13 +49,16 @@ function About() {
   }, [])
   const selectUser = useSelectUser()
   useEffect(() => {
+    // get user info
     getDoc(doc(db, `users/${id}`))
       .then((res) => setUserAbout(res.data()))
       .catch((err) => toast.error(err))
   }, [userMemo])
   useEffect(() => {
+    // prevent this effect from running on the initial render
     isMounted.current = true
     if (isMounted.current && img) {
+      // upload image
       const uploadImg = async () => {
         setImgUploadLoading(true)
 
@@ -64,6 +67,7 @@ function About() {
           `coverImage/${img.name + new Date().getTime()}`
         )
         try {
+          // checking if coverImg already exists. If true, delete existing coverImg and replace with new one.
           if (user?.coverImg) {
             await deleteObject(ref(storage, user?.coverImgFullPath))
           }
