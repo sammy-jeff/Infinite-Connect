@@ -8,6 +8,8 @@ import useSignIn from '../../../customs/useSignIn'
 import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 function CallToAction() {
+  const [errorMessage,setErrorMessage]= useState('')
+  const error_holder = errorMessage.toString().substring(10,errorMessage.toString().length-1)
   const initialValues = {
     email: '',
     password: '',
@@ -15,9 +17,10 @@ function CallToAction() {
   const handleSignIn = useSignIn()
  const formik = useFormik({
   initialValues,
-  onSubmit:({email,password})=>handleSignIn(email,password)
+  onSubmit:({email,password})=>handleSignIn(email,password,setErrorMessage)
  })
 
+ 
   
   const { isLoadingAuth } = useSelector((state) => state.userAuth)
  
@@ -27,6 +30,7 @@ function CallToAction() {
     <section className={styles.action}>
       <div>
         <h1>Connect The World</h1>
+        {errorMessage&&<p className={styles.errorMessage}>{error_holder}</p>}
         <form
           className={styles.form}
           onSubmit={formik.handleSubmit}>

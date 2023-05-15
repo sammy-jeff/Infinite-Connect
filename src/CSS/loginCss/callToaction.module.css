@@ -11,6 +11,11 @@
   font-weight: 100;
   color: #8f5849;
 }
+.errorMessage{
+  color: #d11124;
+  font-weight: bold;
+  margin-top: 10px;
+}
 .form {
   padding: 2rem 0rem;
   display: flex;

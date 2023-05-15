@@ -9,6 +9,8 @@ import { faEye, faEyeSlash, faInfinity, faSpinner } from '@fortawesome/free-soli
 import {useFormik} from "formik"
 import { signUpValidation } from '../../helpers/validation'
 function SignUpScreen({ showPassword, setShowPassword }) {
+  const [errorMessage,setErrorMessage]= useState('')
+  const error_holder = errorMessage.toString().substring(10,errorMessage.toString().length-1)
   const initialValues = {
     username: '',
     email: '',
@@ -17,7 +19,7 @@ function SignUpScreen({ showPassword, setShowPassword }) {
   const handleSubmit =useSignUp()
   const [verificationMessage,setVerificationMessage] = useState("")
   const onSubmit = (values)=>{
-    handleSubmit(values.username,values.email,values.password,setVerificationMessage)
+    handleSubmit(values.username,values.email,values.password,setVerificationMessage,setErrorMessage)
   }
   const formik = useFormik({
     initialValues,
@@ -37,6 +39,7 @@ function SignUpScreen({ showPassword, setShowPassword }) {
       </header>
       <h1>Meet New Friends</h1>
       {verificationMessage&&<p className={styles.verification}>{verificationMessage}</p>}
+      {errorMessage&&<p className={styles.errorMessage}>{error_holder}</p>}
       <form
         className={styles.form}
         onSubmit={

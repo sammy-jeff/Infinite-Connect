@@ -10,7 +10,12 @@
 .header__img {
   padding: 1.4rem 3.3rem;
 }
-
+.errorMessage{
+  color: #d11124;
+  font-weight: bold;
+  margin-bottom: 14px;
+  text-align: center;
+}
 .form {
   width: 70%;
   display: flex;

@@ -1,15 +1,15 @@
 import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth'
 import { doc, updateDoc } from 'firebase/firestore'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setIsLoadingAuth, setIsprofileCompleted } from '../features/userAuth'
+import { setIsLoadingAuth,} from '../features/userAuth'
 import { auth, db } from '../firebase'
 
 function useSignIn() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const handleSignIn = async (email, password) => {
+  const handleSignIn = async (email, password,setErrorMessage) => {
  
     if (!email || !password) return
     try {
@@ -33,7 +33,7 @@ function useSignIn() {
       
     } catch (error) {
       dispatch(setIsLoadingAuth(false))
-      alert(error)
+      setErrorMessage(error?.message)
     }
   }
   return handleSignIn

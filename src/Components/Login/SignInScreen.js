@@ -9,6 +9,8 @@ import { faEye, faEyeSlash, faInfinity, faSpinner } from '@fortawesome/free-soli
 import { useFormik } from 'formik'
 
 function SignInScreen({ showPassword, setShowPassword }) {
+  const [errorMessage,setErrorMessage]= useState('')
+  const error_holder = errorMessage.toString().substring(10,errorMessage.toString().length-1)
   const initialValues = {
     email: '',
     password: '',
@@ -16,7 +18,7 @@ function SignInScreen({ showPassword, setShowPassword }) {
   const handleSignIn = useSignIn()
   const formik= useFormik({
     initialValues,
-    onSubmit:(values)=>handleSignIn(values.email,values.password)
+    onSubmit:(values)=>handleSignIn(values.email,values.password,setErrorMessage)
   })
   const { isLoadingAuth } = useSelector((state) => state.userAuth)
 
@@ -28,6 +30,7 @@ function SignInScreen({ showPassword, setShowPassword }) {
         </Link>
       </header>
       <section className={styles.section}>
+      {errorMessage&&<p className={styles.errorMessage}>{error_holder}</p>}
         <form
           className={styles.form}
           onSubmit={formik.handleSubmit}>

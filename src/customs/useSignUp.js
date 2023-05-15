@@ -10,7 +10,7 @@ function useSignUp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
  
-  const handleSignUp = async (name, email, password,setVerificationMessage) => {
+  const handleSignUp = async (name, email, password,setVerificationMessage,setErrorMessage) => {
     if (!name || !email || !password) return;
 
     try {
@@ -48,7 +48,7 @@ function useSignUp() {
       // dispatch(setIsprofileCompleted(true));
     } catch (error) {
       dispatch(setIsLoadingAuth(false));
-      alert(error);
+      setErrorMessage(error?.message)
       dispatch(setLoading(false));
     }
   };
