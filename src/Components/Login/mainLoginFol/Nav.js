@@ -13,7 +13,7 @@ function Nav() {
   return (
     <nav className={styles.navContainer}>
       <FontAwesomeIcon icon={faInfinity} size='3x' color='#0a66c2' />
-      <ul className={styles.topLinks}>
+      {/* <ul className={styles.topLinks}>
         <li>
           <Link to='/discover'>
             <FontAwesomeIcon icon={faCompass} />
@@ -38,7 +38,7 @@ function Nav() {
             <p>Jobs</p>
           </Link>
         </li>
-      </ul>
+      </ul> */}
       <div className={styles.bottomLinks}>
         <Link to='/signUp' className={styles.join}>
           Sign Up
