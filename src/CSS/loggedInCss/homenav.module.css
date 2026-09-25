@@ -255,3 +255,24 @@
     gap: 12px;
   }
 }
+.badge__container {
+  color: #fff;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  width: auto;
+  padding: 0 5px;
+  border-radius: 9px;
+  line-height: 1;
+  box-shadow: 0 0 0 2px #fff;
+  animation: badge-pop 250ms ease-out;
+}
+@keyframes badge-pop {
+  from {
+    transform: scale(0.4);
+  }
+}
+.big__screen input {
+  -webkit-appearance: none;
+  appearance: none;
+}

@@ -14,22 +14,16 @@ import { auth, db } from '../../../firebase'
 import SharedLayout from '../../SharedLayout'
 
 import useSelectUser from '../../../customs/useSelectUser'
-import { msgIds } from '../../../helpers/msgIds'
+import useWindowWidth from '../../../customs/useWindowWidth'
 
 function RightSide() {
   const [usersFill, setusersFill] = useState([])
-  const [width, setWidth] = useState(window.innerWidth)
-  const user1  = auth.currentUser.uid
+  const width = useWindowWidth()
   const q = query(
     collection(db, 'users'),
     where('id', '!=', auth?.currentUser?.uid),
     limit(3)
   )
-  useEffect(() => {
-    window.addEventListener('resize', () => setWidth(window.innerWidth))
-    return () =>
-      window.removeEventListener('resize', () => setWidth(window.innerWidth))
-  }, [])
 
   useEffect(() => {
     const getSnapshot = onSnapshot(q, (querySnapShot) => {
@@ -58,7 +52,12 @@ function RightSide() {
         {usersFill.map((u) => {
           return (
             <div className={styles.suggestions} key={u.id}>
-              <img src={u.avatar || `/user.png`} alt='' />
+              <img
+                src={u.avatar || `/user.png`}
+                alt=''
+                loading='lazy'
+                decoding='async'
+              />
 
               <div className={styles.sugs__info__container}>
                 <Link to={`/about/${u.id}`}>

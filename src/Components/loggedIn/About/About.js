@@ -7,7 +7,7 @@ import {
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import React, { lazy, Suspense, useState } from 'react'
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -26,8 +26,7 @@ import {
   uploadBytes,
 } from 'firebase/storage'
 import useSelectUser from '../../../customs/useSelectUser'
-import { useMemo } from 'react'
-import { msgIds } from '../../../helpers/msgIds'
+import useWindowWidth from '../../../customs/useWindowWidth'
 
 const UpdateProfileModal = lazy(() => import('./UpdateProfileModal'))
 function About() {
@@ -38,22 +37,19 @@ function About() {
   const [img, setImg] = useState(null)
   const [imgUploadLoading, setImgUploadLoading] = useState(false)
   const [showUpdateFormModal, setShowUpdateFormModal] = useState(false)
-  const userMemo = useMemo(() => user, [user])
   const isMounted = useRef()
   const trunctate = useTruncation()
-  const [width, setWidth] = useState(window.innerWidth)
-  useEffect(() => {
-    window.addEventListener('resize', () => setWidth(window.innerWidth))
-    return () =>
-      window.removeEventListener('resize', () => setWidth(window.innerWidth))
-  }, [])
+  const width = useWindowWidth()
   const selectUser = useSelectUser()
+  // live profile: refreshes on edits and when navigating to another profile
   useEffect(() => {
-    // get user info
-    getDoc(doc(db, `users/${id}`))
-      .then((res) => setUserAbout(res.data()))
-      .catch((err) => toast.error(err))
-  }, [userMemo])
+    setUserAbout(null)
+    return onSnapshot(
+      doc(db, 'users', id),
+      (res) => setUserAbout(res.data()),
+      () => toast.error('Could not load profile')
+    )
+  }, [id])
   useEffect(() => {
     // prevent this effect from running on the initial render
     isMounted.current = true

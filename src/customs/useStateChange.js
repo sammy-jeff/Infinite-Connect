@@ -1,55 +1,41 @@
 import { onAuthStateChanged } from 'firebase/auth'
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot } from 'firebase/firestore'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setChat } from '../features/chatGlobal'
 import { setIsprofileCompleted, setUserAuth } from '../features/userAuth'
 import { setUser } from '../features/userSlice'
 import { auth, db } from '../firebase'
 
 function useStateChange() {
-  // const navigate = useNavigate()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, (cUser) => {
-      if (cUser&&cUser?.emailVerified) {
-        dispatch(setUserAuth(cUser))
-        onSnapshot(doc(db, 'users', cUser.uid), () => {
-          getDoc(doc(db, 'users', cUser.uid))
-            .then((snapShot) => {
-              const data = snapShot.data()
-              dispatch(setUser({ ...data, id: snapShot.id }))
-              return snapShot
-            })
-            .then((res) => {
-              if (!cUser) {
-                return
-              } else return res
-            })
-            .then((res) => {
-              if (
-                !res?.data()?.education &&
-                !res?.data()?.work &&
-                !res?.data()?.about
-              ) {
-                dispatch(setIsprofileCompleted(true))
-              } else {
-                dispatch(setIsprofileCompleted(false))
-              }
-            })
-        })
+    let unsubscribeUser = () => {}
+    const unsubscribeAuth = onAuthStateChanged(auth, (cUser) => {
+      // drop the previous account's profile listener before starting a new one
+      unsubscribeUser()
+      unsubscribeUser = () => {}
 
-        // navigate('/home', { replace: true })
+      if (cUser && cUser?.emailVerified) {
+        dispatch(setUserAuth(cUser))
+        // the snapshot already carries the profile, no extra getDoc needed
+        unsubscribeUser = onSnapshot(doc(db, 'users', cUser.uid), (snapShot) => {
+          const data = snapShot.data()
+          dispatch(setUser({ ...data, id: snapShot.id }))
+          dispatch(
+            setIsprofileCompleted(!data?.education && !data?.work && !data?.about)
+          )
+        })
       } else {
         dispatch(setUser(null))
         dispatch(setChat(null))
         dispatch(setUserAuth(null))
       }
-      console.log(cUser)
     })
     return () => {
-      return unSubscribe
+      unsubscribeAuth()
+      unsubscribeUser()
     }
   }, [dispatch])
 }

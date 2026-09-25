@@ -1,68 +1,38 @@
 import { faPenAlt, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  collection,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  startAfter,
-} from 'firebase/firestore'
-import Skeleton from 'react-loading-skeleton'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-
-import { useDispatch, useSelector } from 'react-redux'
+import { collection, orderBy, query } from 'firebase/firestore'
+import React, { useRef } from 'react'
 import styles from '../../../CSS/loggedInCss/middleMain.module.css'
-
-import useInfiniteScroll_realtime from '../../../customs/useInfiniteScroll_realtime'
-import { setPosts } from '../../../features/posts'
+import useInfiniteScroll from '../../../customs/useInfiniteScroll'
+import useLiveQuery from '../../../customs/useLiveQuery'
 import { db } from '../../../firebase'
-
 import MainPost from './MainPost'
+import PostSkeleton from './PostSkeleton'
+
+const PAGE_SIZE = 5
+const postsQuery = () =>
+  query(collection(db, 'posts'), orderBy('createdAt', 'desc'))
 
 function MiddleMain() {
-  const { posts } = useSelector((state) => state.posts)
-  const postMemo = useMemo(() => posts, [posts])
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch()
-  const PAGE_SIZE = 5
-  const q = query(
-    collection(db, 'posts'),
-    orderBy('createdAt', 'desc'),
-    limit(PAGE_SIZE)
-  )
+  const {
+    items: posts,
+    initialLoading,
+    loading,
+    hasMore,
+    loadMore,
+  } = useLiveQuery('posts', postsQuery, PAGE_SIZE)
   const pageEnd = useRef()
-  useEffect(() => {
-    const getPosts = onSnapshot(q, (postSnapShot) => {
-      let pst = []
-      postSnapShot.forEach((snapshot) => {
-        pst.push({ ...snapshot.data(), id: snapshot.id })
-      })
-      dispatch(setPosts(pst))
-    })
+  useInfiniteScroll(pageEnd, loadMore, { enabled: hasMore && !loading })
 
-    return () => getPosts()
-    // eslint-disable-next-line
-  }, [])
-  const pageSize = 3
-  const next = query(
-    collection(db, 'posts'),
-    orderBy('createdAt', 'desc'),
-    startAfter(posts[posts.length - 1]?.createdAt || 0),
-    limit(pageSize)
-  )
-  useInfiniteScroll_realtime(
-    posts,
-    pageEnd,
-    setPosts,
-    next,
-    null,
-    postMemo,
-    setLoading
-  )
-  // useEffect(() => {
-  //   setLoading(true)
-  // }, [posts.length])
+  if (initialLoading) {
+    return (
+      <>
+        <PostSkeleton />
+        <PostSkeleton />
+      </>
+    )
+  }
+
   return (
     <>
       {posts.length === 0 ? (
@@ -71,11 +41,7 @@ function MiddleMain() {
           <p>Start A New Post</p>
         </div>
       ) : (
-        <>
-          {posts?.map((post) => (
-            <MainPost key={post.id} post={post} />
-          ))}
-        </>
+        posts.map((post) => <MainPost key={post.id} post={post} />)
       )}
 
       {loading && posts.length ? (
@@ -87,9 +53,11 @@ function MiddleMain() {
         </div>
       ) : null}
 
-      <div ref={pageEnd} className={styles.target}>
-        .
-      </div>
+      {!hasMore && posts.length > PAGE_SIZE ? (
+        <p className={styles.feed_end}>You're all caught up 🎉</p>
+      ) : null}
+
+      <div ref={pageEnd} aria-hidden='true' className={styles.sentinel} />
     </>
   )
 }

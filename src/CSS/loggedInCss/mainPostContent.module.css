@@ -487,3 +487,61 @@
       right: 0;
     }
   }
+/* ---- polish ---- */
+.cta__list li {
+  align-items: center;
+  user-select: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.cta__list li label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+.cta__list li.liked,
+.cta__list li.liked p {
+  color: #0a66c2;
+  font-weight: 600;
+}
+.cta__list li.liked svg {
+  animation: like-pop 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes like-pop {
+  40% {
+    transform: scale(1.4) rotate(-12deg);
+  }
+}
+:is(.actions__lists, .opaque) button {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+:is(.actions__lists, .opaque) button:hover {
+  background-color: #eef3f8;
+}
+:is(.actions__lists, .opaque) button.liked {
+  color: #0a66c2;
+  font-weight: 600;
+}
+.comment__body {
+  animation: comment-in 220ms ease-out;
+}
+@keyframes comment-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+.thread_skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 1rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .comment__body,
+  .cta__list li.liked svg {
+    animation: none;
+  }
+}

@@ -1,69 +1,68 @@
-import {
-  faArrowLeft,
-  faArrowRight,
-  faSpinner,
-} from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
-
+import React, { useEffect } from 'react'
 import styles from '../../../CSS/loggedInCss/gallery.module.css'
-function Gallery({ setShowGallery, galleryImg, post, setGalleryImg }) {
-  const [showLeft, setShowLeft] = useState(true)
-  const [showRight, setShowRight] = useState(true)
-  const [galleryLoad, setGalleryLoad] = useState(false)
+import { isVideo } from '../../../helpers/posts'
 
-  const position = post.media?.indexOf(galleryImg)
+function Gallery({ media, index, setIndex, onClose }) {
+  const current = media[index]
+  const hasPrev = index > 0
+  const hasNext = index < media.length - 1
+
+  // keyboard navigation: arrows to browse, Escape to close
   useEffect(() => {
-    if (position === 0) setShowLeft(false)
-    else setShowLeft(true)
-    if (position === post?.media.length - 1) setShowRight(false)
-    else setShowRight(true)
-    // eslint-disable-next-line
-  }, [position])
-  const navigateRight = async () => {
-    setGalleryLoad(true)
-    let currentPos = position
-    currentPos++
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft' && index > 0) setIndex(index - 1)
+      if (e.key === 'ArrowRight' && index < media.length - 1)
+        setIndex(index + 1)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = overflow
+    }
+  }, [index, media.length, setIndex, onClose])
 
-    await setGalleryImg(post?.media[currentPos])
-    setGalleryLoad(false)
-  }
-  const navigateLeft = async () => {
-    setGalleryLoad(true)
-    let currentPos = position
-    currentPos--
+  // warm the cache for the next image so browsing feels instant
+  useEffect(() => {
+    const next = media[index + 1]
+    if (next && !isVideo(next)) new Image().src = next.url
+  }, [index, media])
 
-    await setGalleryImg(post?.media[currentPos])
-    setGalleryLoad(false)
-  }
-  console.log(galleryLoad)
+  if (!current) return null
+
   return (
-    <div className={styles.galleryModal}>
+    <div className={styles.galleryModal} role='dialog' aria-modal='true'>
       <div className={styles.cancel}>
-        <FontAwesomeIcon
-          icon={faArrowLeft}
-          onClick={() => setShowGallery(false)}
-        />
+        <FontAwesomeIcon icon={faArrowLeft} onClick={onClose} />
+        <span className={styles.counter}>
+          {index + 1} / {media.length}
+        </span>
       </div>
       <div className={styles.img__main}>
-        {galleryLoad ? (
-          <FontAwesomeIcon
-            className={styles.spinner}
-            icon={faSpinner}
-            size='2x'
-          />
+        {isVideo(current) ? (
+          <video key={current.url} src={current.url} controls autoPlay playsInline />
         ) : (
-          <img src={galleryImg.url} loading='lazy' alt='post_img' />
+          <img key={current.url} src={current.url} alt='post_img' />
         )}
-        {showLeft ? (
+        {hasPrev ? (
           <div className={styles.nav_container__left}>
-            <FontAwesomeIcon icon={faArrowLeft} onClick={navigateLeft} />
+            <FontAwesomeIcon
+              icon={faArrowLeft}
+              onClick={() => setIndex(index - 1)}
+            />
           </div>
         ) : null}
 
-        {showRight ? (
+        {hasNext ? (
           <div className={styles.nav_container__right}>
-            <FontAwesomeIcon icon={faArrowRight} onClick={navigateRight} />
+            <FontAwesomeIcon
+              icon={faArrowRight}
+              onClick={() => setIndex(index + 1)}
+            />
           </div>
         ) : null}
       </div>

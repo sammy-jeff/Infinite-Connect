@@ -1,21 +1,9 @@
-import {
-  faCheckCircle,
-  faSpinner,
-  faThumbsUp,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  increment,
-  updateDoc,
-} from 'firebase/firestore'
-import moment from 'moment'
-import React, { useState } from 'react'
+import { deleteDoc, doc, increment, updateDoc } from 'firebase/firestore'
+import React from 'react'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import styles from '../../../CSS/loggedInCss/middleMain.module.css'
@@ -29,24 +17,15 @@ import {
   setUpdateFlagRepl,
 } from '../../../features/replies'
 import { auth, db } from '../../../firebase'
+import TimeAgo from '../../TimeAgo'
 
-function Replies({ repl, setReply_text, setReply, post, commt,postId }) {
-  const [likeLoad, setLikeLoad] = useState(false)
-  const { user } = useSelector((state) => state.user.value)
+function Replies({ repl, setReply_text, setReply, post, commt, postId }) {
   const dispatch = useDispatch()
   const commentRef = doc(doc(db, 'posts', postId), `comments`, commt?.id)
-  const handleLike = usePostLike(
-    repl,
-    `/posts/${postId}/comments/${commt?.id}/replies`,
-    repl.data_id,
-    doc(commentRef, 'replies', repl.data_id),
-    setLikeLoad
-  )
+  const replyRef = doc(commentRef, 'replies', repl.id)
+  const { liked, toggleLike } = usePostLike(repl, replyRef)
   const truncateText = useTruncation()
   const handleLikedByList = useLikeModal()
-  const filterIds = repl.likedBy.map((element) => {
-    return element.uid
-  })
   const handleReplyUpdate = () => {
     setReply(true)
     dispatch(setUpdateFlagRepl(true))
@@ -54,31 +33,23 @@ function Replies({ repl, setReply_text, setReply, post, commt,postId }) {
     setReply_text(repl?.body)
   }
   const handleDeleteReplies = async () => {
-    const confirm = window.confirm('Delete reply?')
-    if (confirm) {
-      try {
-        await deleteDoc(doc(commentRef, 'replies', repl.data_id))
-        await getDocs(collection(db, `/posts/${postId}/comments`)).then(
-          (snapshot) => {
-            snapshot.forEach(async (snap) => {
-              if (snap.id === commt?.id) {
-                await updateDoc(commentRef, {
-                  replies_count: commt.replies_count > 0 ? increment(-1) : 0,
-                })
-              }
-            })
-          }
-        )
-        toast.success('Reply deleted successfully', {
-          delay: 1000,
-          position: 'bottom-right',
-        })
-      } catch (error) {
-        toast.error(error, {
-          delay: 1000,
-          position: 'bottom-right',
-        })
-      }
+    if (!window.confirm('Delete reply?')) return
+    try {
+      await Promise.all([
+        deleteDoc(replyRef),
+        updateDoc(commentRef, {
+          replies_count: commt.replies_count > 0 ? increment(-1) : 0,
+        }),
+      ])
+      toast.success('Reply deleted successfully', {
+        delay: 1000,
+        position: 'bottom-right',
+      })
+    } catch (error) {
+      toast.error('Could not delete reply', {
+        delay: 1000,
+        position: 'bottom-right',
+      })
     }
   }
   const handleTag = () => {
@@ -110,50 +81,32 @@ function Replies({ repl, setReply_text, setReply, post, commt,postId }) {
               <small className={styles.author__indicator}>author</small>
             )}
           </Link>
-          <small>{moment(repl.createdAt.toDate()).fromNow(true)}</small>
+          <small>
+            <TimeAgo value={repl.createdAt} />
+          </small>
         </div>
         <p className={styles.comment__proper}>{truncateText(repl.body, 80)}</p>
       </div>
       <div className={styles.replies__actions}>
-        <ul className={likeLoad ? styles.opaque : styles.actions__lists}>
+        <ul className={styles.actions__lists}>
           <li>
-            {likeLoad ? (
-              <div className={styles.comment__load}>
-                <FontAwesomeIcon className={styles.spin} icon={faSpinner} />
-              </div>
-            ) : filterIds?.indexOf(user?.id) !== -1 ? (
-              <button
-                style={{ color: '#0a66c2' }}
-                onClick={handleLike}
-                disabled={likeLoad ? true : false}>
-                liked
-              </button>
-            ) : (
-              <button onClick={handleLike} disabled={likeLoad ? true : false}>
-                like
-              </button>
-            )}
+            <button
+              onClick={toggleLike}
+              className={liked ? styles.liked : undefined}
+                  aria-pressed={liked}>
+              {liked ? 'liked' : 'like'}
+            </button>
           </li>
           <li>
-            <button onClick={handleTag} disabled={likeLoad ? true : false}>
-              reply
-            </button>
+            <button onClick={handleTag}>reply</button>
           </li>
           {auth.currentUser.uid === repl.author_id && (
             <>
               <li>
-                <button
-                  onClick={handleReplyUpdate}
-                  disabled={likeLoad ? true : false}>
-                  Update
-                </button>
+                <button onClick={handleReplyUpdate}>Update</button>
               </li>
               <li>
-                <button
-                  onClick={handleDeleteReplies}
-                  disabled={likeLoad ? true : false}>
-                  Delete
-                </button>
+                <button onClick={handleDeleteReplies}>Delete</button>
               </li>
             </>
           )}

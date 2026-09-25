@@ -1,45 +1,35 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '../../../CSS/loggedInCss/leftSide.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faBookmark,
   faCalendarAlt,
-  faCamera,
   faCheckCircle,
   faChevronDown,
   faChevronUp,
   faPlus,
-  faSpinner,
-  faTrash,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { db } from '../../../firebase'
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
-import useProfilePicUpload from '../../../customs/useProfilePicUpload'
-import Moment from 'react-moment'
-import useDeleteProfilePic from '../../../customs/useDeleteProfilePic'
+import { fullDate } from '../../../helpers/timeAgo'
+import useWindowWidth from '../../../customs/useWindowWidth'
 function LeftSide() {
   const [lessMore, setLessMore] = useState(false)
   const { user } = useSelector((state) => state.user.value)
-  const [width, setWidth] = useState(window.innerWidth)
-  const q = query(collection(db, 'users'), where('isOnline', '==', true))
-
+  const width = useWindowWidth()
   const [activeUsers, setActiveUsers] = useState(0)
   const breakPoint = 768
 
   useEffect(() => {
+    const q = query(collection(db, 'users'), where('isOnline', '==', true))
     const getSnapshot = onSnapshot(q, (snapShot) => {
       setActiveUsers(snapShot.docs.length)
     })
     return () => getSnapshot()
     // eslint-disable-next-line
-  }, [])
-  useEffect(() => {
-    window.addEventListener('resize', () => setWidth(window.innerWidth))
-    return () =>
-      window.removeEventListener('resize', () => setWidth(window.innerWidth))
   }, [])
 
   return (
@@ -49,7 +39,7 @@ function LeftSide() {
           <div className={styles.back__img}></div>
           <div className={styles.profile__container}>
             <div className={styles.profilePic__container}>
-              <img src={user?.avatar || `user.png`} alt='' />
+              <img src={user?.avatar || `/user.png`} alt='' />
             </div>
             <Link to={`/about/${user?.id}`}>
               <p className={styles.name}>
@@ -83,7 +73,11 @@ function LeftSide() {
               <span>
                 <FontAwesomeIcon icon={faCalendarAlt} />
               </span>
-              <Moment interval>{user?.createdAt?.toDate()}</Moment>
+              {fullDate(user?.createdAt, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
             </p>
           </div>
           <div className={styles.items}>
