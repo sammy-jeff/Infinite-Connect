@@ -8,14 +8,12 @@ import {
   faCheckCircle,
   faDotCircle,
 } from '@fortawesome/free-solid-svg-icons'
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../firebase'
 
 import useSelectUser from '../../../customs/useSelectUser'
 import { useSelector } from 'react-redux'
-import moment from 'moment'
-import { msgIds } from '../../../helpers/msgIds'
-import { Link } from 'react-router-dom'
+import TimeAgo from '../../TimeAgo'
 
 function MessageThread({ u, user1, width }) {
   const { chat } = useSelector((state) => state.chats)
@@ -25,24 +23,27 @@ function MessageThread({ u, user1, width }) {
   const mainStr = u.chat_id
   const lastChat_id = mainStr.split(user1).join('')
 
-  useEffect(() => {
-    const unsub = onSnapshot(doc(db, 'users', lastChat_id), () => {
-      getDoc(doc(db, 'users', lastChat_id)).then((snapShot) => {
+  // the snapshot already carries the profile, no extra getDoc needed
+  useEffect(
+    () =>
+      onSnapshot(doc(db, 'users', lastChat_id), (snapShot) =>
         setData(snapShot.data())
-      })
-    })
-    return () => unsub()
-    // eslint-disable-next-line
-  }, [])
-  const id = msgIds(user1,data?.id)
+      ),
+    [lastChat_id]
+  )
   const selectUser = useSelectUser()
   return (
     <div
    
       className={chat?.id === data?.id ? styles.active_chat : styles.user}
-      onClick={() => selectUser(data, width,data?.id)}>
+      onClick={() => data && selectUser(data, width, lastChat_id)}>
       <div className={styles.userPics__container}>
-        <img src={data?.avatar || `/user.png`} alt='user_pics' />{' '}
+        <img
+          src={data?.avatar || `/user.png`}
+          alt='user_pics'
+          loading='lazy'
+          decoding='async'
+        />{' '}
         <FontAwesomeIcon
           icon={faDotCircle}
           color={data?.isOnline === true ? 'green' : 'red'}
@@ -74,7 +75,9 @@ function MessageThread({ u, user1, width }) {
         </p>
       </div>
       <div className={styles.time__count}>
-        <p>{u && moment(u?.createdAt.toDate()).fromNow(true)}</p>
+        <p>
+          <TimeAgo value={u?.createdAt} />
+        </p>
         <p className={u?.from !== user1 && u?.unread ? styles.new : ''}>
           {u?.from !== user1 && u?.unread ? `n` : null}
         </p>

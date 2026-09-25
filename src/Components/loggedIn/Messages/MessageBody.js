@@ -1,117 +1,85 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import styles from '../../../CSS/loggedInCss/messages.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import {
   collection,
-  limit,
-  onSnapshot,
+  doc,
   orderBy,
   query,
-  startAfter,
+  updateDoc,
 } from 'firebase/firestore'
 import { auth, db } from '../../../firebase'
-import { setMessages } from '../../../features/messages'
-import useInfiniteScroll_realtime from '../../../customs/useInfiniteScroll_realtime'
+import useInfiniteScroll from '../../../customs/useInfiniteScroll'
+import useLiveQuery from '../../../customs/useLiveQuery'
 import useTruncation from '../../../customs/useTruncation'
-import moment from 'moment'
 import { msgIds } from '../../../helpers/msgIds'
+import TimeAgo from '../../TimeAgo'
+
 function MessageBody({ imgLoad }) {
-  const { messages } = useSelector((state) => state.messages)
   const { chat } = useSelector((state) => state.chats)
-  const user1= auth.currentUser.uid
+  const user1 = auth.currentUser.uid
   const user2 = chat?.id
-  // const ids=msgIds(user1,user2)
-  const msgMemo = useMemo(() => messages, [messages])
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch()
- console.log(messages)
-  const id = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`
-  const q = query(
-    collection(db, `/messages/${id}/chat`),
-    orderBy('createdAt', 'desc'),
-    limit(8)
-  )
+  const id = msgIds(user1, user2)
   const rootElem = useRef()
   const target = useRef()
   const truncateMessage = useTruncation()
-  useEffect(() => {
-    const getSnapshot = onSnapshot(q, (querySnapshot) => {
-      const msgs = []
-      querySnapshot.forEach((snapshot) => {
-        msgs.push({ ...snapshot.data(), id: snapshot.id })
-      })
-      dispatch(setMessages(msgs))
-    })
-    return () => getSnapshot()
-    // eslint-disable-next-line
-  }, [chat])
-  const next = query(
-    collection(db, `/messages/${id}/chat`),
-    orderBy('createdAt', 'desc'),
-    startAfter(messages[messages.length - 1]?.createdAt || 0),
-    limit(4)
+
+  const {
+    items: messages,
+    loading,
+    hasMore,
+    loadMore,
+  } = useLiveQuery(
+    user2 ? `messages/${id}/chat` : null,
+    () =>
+      query(collection(db, 'messages', id, 'chat'), orderBy('createdAt', 'desc')),
+    15
   )
-  useInfiniteScroll_realtime(
-    messages,
-    target,
-    setMessages,
-    next,
-    rootElem.current,
-    msgMemo,
-    setLoading
-  )
-  const bottomRef = useRef(null)
+  // the list is column-reversed, so the sentinel at the end sits at the top
+  useInfiniteScroll(target, loadMore, {
+    enabled: hasMore && !loading,
+    rootRef: rootElem,
+    rootMargin: '150px',
+  })
+
+  // mark the conversation read when a new message arrives while it is open
+  const newest = messages[0]
   useEffect(() => {
-    bottomRef.current.scrollIntoView({ behavior: 'smooth' })
-  }, [])
-  // console.log(messages)
-  useEffect(() => {
-    setLoading(true)
-  }, [messages.length])
+    if (newest && newest.from === user2) {
+      updateDoc(doc(db, 'lastMsg', id), { unread: false }).catch(() => {})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newest?.id])
+
   return (
     <div className={styles.messagebody}>
       {' '}
       {imgLoad && <p className={styles.imgLoad__indicator}>Loading...</p>}
       <div ref={rootElem} className={styles.body}>
-        <div ref={bottomRef} />
-        {messages.map((message) => {
-          return (
-            <div key={message.id}>
-              {' '}
-              {message?.from + message?.to === id ||
-              message?.to + message?.from === id ? (
-                <div
-                  className={
-                    message.from === user1 ? styles.wrapper : styles.own
-                  }>
-                  <p
-                    className={
-                      message.from === user1 ? styles.me : styles.friend
-                    }>
-                    {message.media ? (
-                      <img src={message.media} alt={message.text} />
-                    ) : null}
-                    {truncateMessage(message.text, 150)}
-                    <small>
-                      {moment(message.createdAt.toDate()).fromNow(true)}
-                    </small>
-                  </p>
-                </div>
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={message.from === user1 ? styles.wrapper : styles.own}>
+            <p className={message.from === user1 ? styles.me : styles.friend}>
+              {message.media ? (
+                <img src={message.media} alt={message.text} loading='lazy' />
               ) : null}
-            </div>
-          )
-        })}
+              {truncateMessage(message.text, 150)}
+              <small>
+                <TimeAgo value={message.createdAt} />
+              </small>
+            </p>
+          </div>
+        ))}
         {loading && messages.length ? (
           <div className={styles.spinner}>
             <FontAwesomeIcon icon={faSpinner} />
           </div>
         ) : null}
-        <div ref={target} className={styles.msg_target}>
-          .
-        </div>
+        <div ref={target} aria-hidden='true' style={{ minHeight: 1 }} />
       </div>
     </div>
   )

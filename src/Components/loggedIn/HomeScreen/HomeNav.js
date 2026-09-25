@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from '../../../CSS/loggedInCss/homenav.module.css'
 import {
-  
   faCommentDots,
-  
   faHome,
   faInfinity,
   faSearch,
@@ -12,18 +10,48 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { signOut } from 'firebase/auth'
 import { auth, db } from '../../../firebase'
-import {  doc, updateDoc } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { Link, NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import SearchResults from './SearchResults'
 import { setUser } from '../../../features/userSlice'
+import useWindowWidth from '../../../customs/useWindowWidth'
+
+// Number of conversations with messages the current user has not opened yet.
+function useUnreadCount(uid) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    if (!uid) return undefined
+    return onSnapshot(
+      query(
+        collection(db, 'lastMsg'),
+        where('to', '==', uid),
+        where('unread', '==', true)
+      ),
+      (snap) => setCount(snap.size),
+      () => setCount(0)
+    )
+  }, [uid])
+  useEffect(() => {
+    const base = 'Infinite-connect'
+    document.title = count ? `(${count}) ${base}` : base
+  }, [count])
+  return count
+}
 
 function HomeNav({ showInput, setShowInput }) {
   const { user } = useSelector((state) => state.user.value)
 
   const breakPoint = 801
-  const [width, setWidth] = useState(window.innerWidth)
- 
+  const width = useWindowWidth()
+  const unread = useUnreadCount(user?.id)
   const [searchText, setSearchText] = useState('')
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
@@ -41,12 +69,6 @@ function HomeNav({ showInput, setShowInput }) {
     }
   }
 
-  useEffect(() => {
-    window.addEventListener('resize', () => setWidth(window.innerWidth))
-    return () =>
-      window.removeEventListener('resize', () => setWidth(window.innerWidth))
-  }, [])
-
   return (
     <nav className={styles.nav}>
       <div className={styles.header__container}>
@@ -58,8 +80,8 @@ function HomeNav({ showInput, setShowInput }) {
         {width >= breakPoint && (
           <div className={styles.big__screen}>
             <input
-              type='text'
-              placeholder='search'
+              type='search'
+              placeholder='Search people'
               onFocus={() => setShowInput(true)}
               onBlur={() => {
                 setShowInput(false)
@@ -124,6 +146,13 @@ function HomeNav({ showInput, setShowInput }) {
               isActive ? styles.active__link : styles.icons__container
             }>
             <FontAwesomeIcon icon={faCommentDots} />
+            {unread > 0 && (
+              <span
+                className={styles.badge__container}
+                aria-label={`${unread} unread conversations`}>
+                {unread > 9 ? '9+' : unread}
+              </span>
+            )}
             <span className={styles.icon__titles}>Messaging</span>
           </NavLink>
         </li>

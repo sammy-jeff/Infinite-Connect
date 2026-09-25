@@ -1,68 +1,43 @@
-import { collection, getDocs, increment, setDoc } from 'firebase/firestore'
-
+import { arrayRemove, arrayUnion, increment, updateDoc } from 'firebase/firestore'
+import { useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { auth, db } from '../firebase'
+import { toast } from 'react-toastify'
 
-function usePostLike(article, articleStr, id, docLike, setLikeLoad) {
+// Toggles the current user's like on a post, comment or reply with a single write.
+// Firestore's latency compensation updates every listener immediately, so the
+// like shows up instantly without waiting for the server round-trip.
+function usePostLike(article, docRef) {
   const { user } = useSelector((state) => state.user.value)
-  const filterIds = article?.likedBy.map((element) => {
-    return element.uid
-  })
-  const handleLike = async () => {
-    const likedByArr = []
-    setLikeLoad(true)
-    if (!filterIds.includes(user?.id)) {
-      await getDocs(collection(db, 'users')).then((snapShot) => {
-        snapShot.forEach((snap) => {
-          if (snap.data().id === auth.currentUser.uid)
-            likedByArr.push({ act_name: snap.data().name, uid: snap.id })
-        })
-      })
-      const index = likedByArr.findIndex((element) => {
-        if (element.uid === user?.id) {
-          return true
-        }
-        return false
-      })
+  const busy = useRef(false)
+  const likedBy = article?.likedBy || []
+  const liked = likedBy.some((element) => element.uid === user?.id)
 
-      if (!index) {
-        await getDocs(collection(db, articleStr)).then((snapShot) => {
-          snapShot.forEach(async (snap) => {
-            if (id === snap.id) {
-              await setDoc(
-                docLike,
-                {
-                  reaction_count: increment(1),
-                  likedBy: [...article?.likedBy, ...likedByArr],
-                },
-                { merge: true }
-              )
-            }
-          })
+  const toggleLike = async () => {
+    if (!user || !article || busy.current) return
+    busy.current = true
+    try {
+      const mine = likedBy.filter((element) => element.uid === user.id)
+      if (mine.length) {
+        await updateDoc(docRef, {
+          likedBy: arrayRemove(...mine),
+          reaction_count: increment(-mine.length),
+        })
+      } else {
+        await updateDoc(docRef, {
+          likedBy: arrayUnion({ act_name: user.name, uid: user.id }),
+          reaction_count: increment(1),
         })
       }
-    } else {
-      const removedLike = article.likedBy.filter(
-        (liked) => liked.uid !== user?.id
-      )
-      await getDocs(collection(db, articleStr)).then((snapShot) => {
-        snapShot.forEach(async (snap) => {
-          if (id === snap.id) {
-            await setDoc(
-              docLike,
-              {
-                reaction_count: article.reaction_count > 0 ? increment(-1) : 0,
-                likedBy: [...removedLike],
-              },
-              { merge: true }
-            )
-          }
-        })
+    } catch (error) {
+      toast.error('Could not update like, please try again', {
+        position: 'bottom-right',
       })
+    } finally {
+      busy.current = false
     }
-    setLikeLoad(false)
   }
-  return handleLike
+
+  return { liked, toggleLike }
 }
 
 export default usePostLike

@@ -379,3 +379,37 @@
     overflow-y: auto;
   }
 }
+
+/* ---- polish ---- */
+.me,
+.friend {
+  border-radius: 16px;
+  line-height: 1.35;
+  word-break: break-word;
+  animation: bubble-in 200ms ease-out;
+}
+.me {
+  border-bottom-right-radius: 4px;
+}
+.friend {
+  border-bottom-left-radius: 4px;
+}
+:is(.me, .friend) small {
+  opacity: 0.75;
+}
+:is(.me, .friend) img {
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .me,
+  .friend {
+    animation: none;
+  }
+}

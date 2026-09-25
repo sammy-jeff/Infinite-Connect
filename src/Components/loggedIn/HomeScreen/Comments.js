@@ -1,7 +1,6 @@
 import {
   faCheckCircle,
   faCircleNotch,
-  faImage,
   faSpinner,
   faThumbsUp,
 } from '@fortawesome/free-solid-svg-icons'
@@ -13,14 +12,11 @@ import {
   doc,
   getDocs,
   increment,
-  limit,
   orderBy,
   query,
   Timestamp,
   updateDoc,
 } from 'firebase/firestore'
-import moment from 'moment'
-
 import React, { useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -28,7 +24,7 @@ import { v4 } from 'uuid'
 import styles from '../../../CSS/loggedInCss/mainPostContent.module.css'
 import useLikeModal from '../../../customs/useLikeModal'
 import { Link } from 'react-router-dom'
-import usePagination from '../../../customs/usePagination'
+import useLiveQuery from '../../../customs/useLiveQuery'
 import usePostLike from '../../../customs/usePostLike'
 import useTruncation from '../../../customs/useTruncation'
 import { setActiveUpdateId, setUpdateFlag } from '../../../features/comments'
@@ -38,24 +34,21 @@ import {
   setUpdateFlagRepl,
 } from '../../../features/replies'
 import { auth, db } from '../../../firebase'
+import TimeAgo from '../../TimeAgo'
 import Replies from './Replies'
 import { toast } from 'react-toastify'
 function Comments({ commt, setComment_text, post,postId }) {
   const [reply, setReply] = useState(false)
   const [reply_text, setReply_text] = useState('')
-  const [repliesLoad, setRepliesLoad] = useState(false)
-  const [replies, setReplies1] = useState([])
   const { user } = useSelector((state) => state.user.value)
-  const [likeLoad, setLikeLoad] = useState(false)
   const [replyPostLoad, setReplyPostLoad] = useState(false)
   const { updateFlagRepl, activeUpdateIdRepl } = useSelector(
     (state) => state.replies
   )
+  const dispatch = useDispatch()
 
-  const [hasMorePages_replies, setHasMorePages_replies] = useState(false)
-
-  const colRef = collection(collection(db, 'posts'), postId, 'comments')
-  const commentRef = doc(doc(db, 'posts', postId), 'comments', commt?.id)
+  const postRef = doc(db, 'posts', postId)
+  const commentRef = doc(postRef, 'comments', commt?.id)
   const pageSize = 2
 
   const truncateText = useTruncation()
@@ -63,95 +56,74 @@ function Comments({ commt, setComment_text, post,postId }) {
     e.target.style.height = 'inherit'
     e.target.style.height = `${e.target.scrollHeight}px`
   }
-  usePagination(
-    `/posts/${postId}/comments/${commt?.id}/replies`,
-    setHasMorePages_replies,
-    setReplies1,
-    replies,
-    2,
-    'asc',
-    setRepliesLoad
+  const {
+    items: replies,
+    loading: repliesLoad,
+    hasMore: hasMorePages_replies,
+    loadMore: loadMoreReplies,
+  } = useLiveQuery(
+    `posts/${postId}/comments/${commt?.id}/replies`,
+    () => query(collection(commentRef, 'replies'), orderBy('createdAt', 'asc')),
+    pageSize
   )
-  const paginatedData = usePagination(
-    `/posts/${postId}/comments/${commt?.id}/replies`,
-    setHasMorePages_replies,
-    setReplies1,
-    replies,
-    2,
-    'asc',
-    setRepliesLoad
-  )
-  const dispatch = useDispatch()
-  const handleLike = usePostLike(
-    commt,
-    `/posts/${postId}/comments`,
-    commt?.id,
-    commentRef,
-    setLikeLoad
-  )
+  const { liked, toggleLike } = usePostLike(commt, commentRef)
   const handleLikedByList = useLikeModal()
-  const q = query(
-    collection(db, `/posts/${postId}/comments/${commt?.id}/replies`),
-    orderBy('createdAt', 'asc'),
-    limit(pageSize)
-  )
   // reply submit functionality
   const handleReplySubmit = async (e) => {
     e.preventDefault()
+    if (!reply_text.trim()) return
     setReplyPostLoad(true)
-    if (updateFlagRepl) {
-      replies.map(async (repl) => {
-        if (repl.updateFlag_id_repl === activeUpdateIdRepl) {
-          await updateDoc(doc(commentRef, 'replies', repl?.data_id), {
+    try {
+      if (updateFlagRepl) {
+        const editing = replies.find(
+          (repl) => repl.updateFlag_id_repl === activeUpdateIdRepl
+        )
+        if (editing) {
+          await updateDoc(doc(commentRef, 'replies', editing.id), {
             body: reply_text,
           })
         }
         dispatch(setActiveUpdateIdRepl(null))
         dispatch(setUpdateFlagRepl(false))
-      })
+      } else {
+        const {
+          isOnline,
+          avatarPath,
+          createdAt,
+          email,
+          friendsList,
+          avatar,
+          name,
+          id,
+          ...others
+        } = user
+        await Promise.all([
+          addDoc(collection(commentRef, 'replies'), {
+            ...others,
+            author_name: user?.name,
+            author_id: auth.currentUser.uid,
+            parent_id: commt?.id,
+            avatar: user?.avatar,
+            avatarPath: user?.avatarPath,
+            createdAt: Timestamp.fromDate(new Date()),
+            reactions: [],
+            reaction_count: 0,
+            likedBy: [],
+            body: reply_text,
+            updateFlag_id_repl: v4(),
+          }),
+          updateDoc(commentRef, { replies_count: increment(1) }),
+        ])
+      }
       setReply(false)
       setReply_text('')
-    } else {
-      const {
-        isOnline,
-        avatarPath,
-        createdAt,
-        email,
-        friendsList,
-        avatar,
-        name,
-        id,
-        ...others
-      } = user
-      await addDoc(collection(colRef, commt?.id, 'replies'), {
-        ...others,
-        author_name: user?.name,
-        author_id: auth.currentUser.uid,
-        parent_id: commt?.id,
-        avatar: user?.avatar,
-        avatarPath: user?.avatarPath,
-        createdAt: Timestamp.fromDate(new Date()),
-        reactions: [],
-        reaction_count: 0,
-        likedBy: [],
-        body: reply_text,
-        updateFlag_id_repl: v4(),
+    } catch (error) {
+      toast.error('Could not post reply, please try again', {
+        position: 'bottom-right',
       })
-      await getDocs(collection(db, `/posts/${postId}/comments`)).then(
-        (snapshot) => {
-          snapshot.forEach(async (snap) => {
-            if (snap.id === commt?.id) {
-              await updateDoc(commentRef, {
-                replies_count: commt?.replies_count + 1,
-              })
-            }
-          })
-        }
-      )
-      setReply_text('')
-      setReply(false)
+    } finally {
+      setReplyPostLoad(false)
     }
-    setReplyPostLoad(false)
   }
   const handleCommentUpdate = () => {
     dispatch(setUpdateFlag(true))
@@ -159,32 +131,27 @@ function Comments({ commt, setComment_text, post,postId }) {
     setComment_text(commt?.body)
   }
   const handleDeleteComment = async () => {
-    const confirm = window.confirm('Delete comment?')
-    if (confirm) {
-      try {
-        await getDocs(q).then((res) => {
-          res.forEach(async (snap) => {
-            if (snap.data().parent_id === commt?.id)
-              await deleteDoc(doc(commentRef, 'replies', snap.id))
-          })
-        })
-        await deleteDoc(commentRef)
-        await getDocs(collection(db, 'posts')).then((snapshot) => {
-          snapshot.forEach(async (snap) => {
-            if (snap.id === postId) {
-              await updateDoc(doc(db, 'posts', snap?.id), {
-                comment_count: post?.comment_count > 0 ? increment(-1) : 0,
-              })
-            }
-          })
-        })
-        toast.success('comment deleted successfully', {
-          delay: 1000,
-          position: 'bottom-right',
-        })
-      } catch (error) {
-        toast.error(error, { delay: 1000, position: 'bottom-right' })
-      }
+    if (!window.confirm('Delete comment?')) return
+    try {
+      const allReplies = await getDocs(collection(commentRef, 'replies'))
+      await Promise.allSettled(
+        allReplies.docs.map((snap) => deleteDoc(snap.ref))
+      )
+      await Promise.all([
+        deleteDoc(commentRef),
+        updateDoc(postRef, {
+          comment_count: post?.comment_count > 0 ? increment(-1) : 0,
+        }),
+      ])
+      toast.success('comment deleted successfully', {
+        delay: 1000,
+        position: 'bottom-right',
+      })
+    } catch (error) {
+      toast.error('Could not delete comment', {
+        delay: 1000,
+        position: 'bottom-right',
+      })
     }
   }
   // Tag users that are interacting on the same reply thread
@@ -194,16 +161,17 @@ function Comments({ commt, setComment_text, post,postId }) {
       commt?.author_id === auth.currentUser.uid ? '' : `@${commt?.author_name}`
     )
   }
-  const filterIds = commt?.likedBy.map((element) => {
-    return element.uid
-  })
-
   return (
     <div>
       <>
         <div className={styles.comments}>
           <div className={styles.img__container__comments}>
-            <img src={commt?.avatar || `/user.png`} alt='' />
+            <img
+              src={commt?.avatar || `/user.png`}
+              alt=''
+              loading='lazy'
+              decoding='async'
+            />
           </div>
           <div className={styles.comment__body}>
             <div className={styles.user__comment}>
@@ -222,33 +190,23 @@ function Comments({ commt, setComment_text, post,postId }) {
                   <small className={styles.author__indicator}>author</small>
                 )}
               </Link>
-              <small>{moment(commt?.createdAt.toDate()).fromNow(true)}</small>
+              <small>
+                <TimeAgo value={commt?.createdAt} />
+              </small>
             </div>
             <p className={styles.comment__proper}>
               {truncateText(commt?.body, 80)}
             </p>
           </div>
           <div className={styles.comment__actions}>
-            <ul className={likeLoad ? styles.opaque : styles.actions__lists}>
+            <ul className={styles.actions__lists}>
               <li>
-                {likeLoad ? (
-                  <div className={styles.comment__load}>
-                    <FontAwesomeIcon className={styles.spin} icon={faSpinner} />
-                  </div>
-                ) : filterIds.includes(user?.id) ? (
-                  <button
-                    style={{ color: '#0a66c2' }}
-                    onClick={handleLike}
-                    disabled={likeLoad ? true : false}>
-                    liked
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleLike}
-                    disabled={likeLoad ? true : false}>
-                    like
-                  </button>
-                )}
+                <button
+                  onClick={toggleLike}
+                  className={liked ? styles.liked : undefined}
+                  aria-pressed={liked}>
+                  {liked ? 'liked' : 'like'}
+                </button>
               </li>
               {commt.reaction_count > 0 && (
                 <>
@@ -265,9 +223,7 @@ function Comments({ commt, setComment_text, post,postId }) {
                 </>
               )}
               <li>
-                <button onClick={handleTag} disabled={likeLoad ? true : false}>
-                  Reply
-                </button>
+                <button onClick={handleTag}>Reply</button>
               </li>
 
               {commt.author_id === auth.currentUser.uid ? (
@@ -277,17 +233,13 @@ function Comments({ commt, setComment_text, post,postId }) {
               ) : null}
               {commt.author_id === auth.currentUser.uid ? (
                 <li>
-                  <button
-                    onClick={handleDeleteComment}
-                    disabled={likeLoad ? true : false}>
-                    Delete
-                  </button>
+                  <button onClick={handleDeleteComment}>Delete</button>
                 </li>
               ) : null}
               <li>
                 {commt.replies_count ? (
                   <p>
-                    {commt.replies_count}
+                    {commt.replies_count}{' '}
                     {commt?.replies_count > 1 ? `replies` : `reply`}
                   </p>
                 ) : null}
@@ -298,7 +250,7 @@ function Comments({ commt, setComment_text, post,postId }) {
             {replies?.map((repl) => (
               <Replies
                 repl={repl}
-                key={repl?.data_id}
+                key={repl?.id}
                 setReply_text={setReply_text}
                 setReply={setReply}
                 post={post}
@@ -307,11 +259,11 @@ function Comments({ commt, setComment_text, post,postId }) {
               />
             ))}
 
-            {hasMorePages_replies && replies.length >= pageSize ? (
+            {hasMorePages_replies ? (
               <button
                 className={styles.comment__load}
-                onClick={() => paginatedData(3)}
-                disabled={repliesLoad ? true : false}>
+                onClick={loadMoreReplies}
+                disabled={repliesLoad}>
                 load more replies{' '}
                 {repliesLoad && <FontAwesomeIcon icon={faSpinner} />}
               </button>
@@ -320,7 +272,7 @@ function Comments({ commt, setComment_text, post,postId }) {
             {reply && (
               <div className={styles.post__comment}>
                 <div className={styles.img__container__comments}>
-                  <img src={user?.avatar || `user.png`} alt='' />
+                  <img src={user?.avatar || `/user.png`} alt='' />
                 </div>
                 <form
                   className={styles.reply_body}

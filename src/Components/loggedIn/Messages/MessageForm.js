@@ -12,13 +12,20 @@ function MessageForm({
   ImgLoad,
 }) {
   const handleKeyDown = (e) => {
+    // Enter sends, Shift+Enter adds a new line
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault()
+      e.currentTarget.form?.requestSubmit()
+      e.target.style.height = 'inherit'
+      return
+    }
     e.target.style.height = 'inherit'
     e.target.style.height = `${e.target.scrollHeight}px`
   }
   return (
     <form className={styles.messageform__container} onSubmit={handleSubmit}>
       <textarea
-        placeholder='Write a message'
+        placeholder='Write a message (Enter to send)'
         autoCorrect='true'
         onKeyDown={handleKeyDown}
         value={text}
